@@ -1,0 +1,109 @@
+package service.booking.reservation.controller;
+
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
+import service.booking.reservation.model.CreateReservationRequest;
+import service.booking.reservation.model.Reservation;
+import service.booking.reservation.model.UpdateReservationRequest;
+import service.booking.reservation.model.dto.GetAllCustomerReservationsDto;
+import service.booking.reservation.service.ReservationService;
+import service.booking.roomapi.entity.Room;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@RestController
+@RequestMapping("api/reservation")
+public class ReservationRestController {
+    private final ReservationService reservationService;
+
+    public ReservationRestController(ReservationService reservationService) {
+        this.reservationService = reservationService;
+    }
+
+    @PostMapping
+    public ResponseEntity<Reservation> createReservation(@Valid @RequestBody CreateReservationRequest request, HttpSession session) {
+        Long customerId = (Long) session
+                .getAttribute(
+                        "customerId"
+                );
+
+        request.setCustomerId(customerId);
+
+        Reservation createReservation = reservationService.createReservation(request);
+
+        return ResponseEntity
+                .status(
+                        HttpStatus.CREATED
+                ).body(
+                        createReservation
+                );
+    }
+
+    @GetMapping("/getAllCustomerReservation")
+    public ResponseEntity<List<GetAllCustomerReservationsDto>> getAllCustomerReservation(HttpSession session) {
+        Long id = (Long) session.getAttribute("customerId");
+
+        if (id == null) {
+            System.out.println("id is null");
+            return ResponseEntity.status(302)
+                    .header(
+                            "Location",
+                            "/login"
+                    ).build();
+        }
+
+        List<GetAllCustomerReservationsDto> listDto = reservationService.getAllReservationByCustomerId(id);
+
+        System.out.println("RESERVATIONS FOUND = " + listDto.size());
+
+        return ResponseEntity.ok(listDto);
+    }
+
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<Reservation> cancelReservation(@PathVariable Long reservationId) {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(
+                        reservationService.cancelReservation(reservationId)
+                );
+    }
+
+    @PutMapping("/{reservationId}")
+    public ResponseEntity<Reservation> updateReservation (@PathVariable Long reservationId, @Valid @RequestBody UpdateReservationRequest request){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(
+                        reservationService.updateReservation(
+                                reservationId,
+                                request.getCheckIn(),
+                                request.getCheckOut())
+                );
+    }
+
+    @GetMapping()
+    public List<Room> getAvailableRooms(
+            @RequestParam @NotNull LocalDate checkIn,
+            @RequestParam @NotNull LocalDate checkOut,
+            @RequestParam @Min(1) int guests)      
+    {
+        return  reservationService
+                .getAvailableRooms(
+                        checkIn,
+                        checkOut,
+                        guests
+                );
+    }
+
+
+
+
+
+
+}

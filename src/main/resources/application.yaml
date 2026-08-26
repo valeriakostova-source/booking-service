@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: Booking-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/Bookingservice
+    username: ${DB_USER}
+    password: ${DB_PASS}
+
+
+  jpa.hibernate.ddl-auto: update
+
+
