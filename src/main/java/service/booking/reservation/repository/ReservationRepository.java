@@ -18,8 +18,8 @@ public interface ReservationRepository extends JpaRepository <Reservation, Long>
             LocalDate checkOut
     );
 
-    List<Reservation> findByCustomerIdAndStatus(long customerId, ReservationStatus status);
-
+    List<Reservation> findByCustomerIdAndStatus(Long customerId, ReservationStatus status);
+    Boolean existsByCustomerIdAndStatus (Long customerId, ReservationStatus Status);
 
 }
 
