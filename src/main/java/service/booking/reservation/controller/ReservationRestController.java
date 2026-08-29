@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
+import org.springframework.security.core.Authentication;
 import service.booking.reservation.model.CreateReservationRequest;
 import service.booking.reservation.model.Reservation;
 import service.booking.reservation.model.UpdateReservationRequest;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.Authenticator;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -106,7 +108,10 @@ public class ReservationRestController {
         return reservationService.hasActiveReservation(customerId);
 
     }
-
+    @GetMapping ("/jwt")
+    public String testJwt (Authentication authentication){
+        return  "You are logged in as " + authentication.getName();
+    }
 
 
 
