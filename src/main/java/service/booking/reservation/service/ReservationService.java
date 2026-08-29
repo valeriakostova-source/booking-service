@@ -266,6 +266,10 @@ public class ReservationService {
                         }
                 ).toList();
     }
+
+    public boolean hasActiveReservation (Long customerId){
+        return reservationRepository.existsByCustomerIdAndStatus (customerId, ReservationStatus.ACTIVE);
+    }
 }
 
 

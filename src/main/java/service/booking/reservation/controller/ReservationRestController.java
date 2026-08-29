@@ -101,7 +101,11 @@ public class ReservationRestController {
                 );
     }
 
+    @GetMapping ("/has-active-booking/{customerId}")
+    public boolean hasActiveReservation(@PathVariable Long customerId){
+        return reservationService.hasActiveReservation(customerId);
 
+    }
 
 
 
