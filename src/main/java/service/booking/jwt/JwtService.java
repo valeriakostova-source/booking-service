@@ -14,26 +14,31 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secret;
 
-    public String extractUsername (String token){
-        return Jwts.parser()
+    public Long extractCustomerId(String token) {
+        String customerId = Jwts.parser()
                 .verifyWith(getSignInKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .get("name").toString();
+                .get("id").toString();
+
+        return Long.parseLong(customerId);
+
+
     }
 
     public boolean isTokenValid(String token) {
-        try{
-            extractUsername(token);
+        try {
+            extractCustomerId(token);
             return true;
-        } catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
 
     }
+
     private SecretKey getSignInKey() {
-        byte [] bytes = secret.getBytes(StandardCharsets.UTF_8);
+        byte[] bytes = secret.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(bytes);
     }
 }
