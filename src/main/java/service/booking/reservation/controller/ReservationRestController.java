@@ -31,9 +31,7 @@ public class ReservationRestController {
     @PostMapping
     public ResponseEntity<Reservation> createReservation(@Valid @RequestBody CreateReservationRequest request, Authentication auth) {
         Long customerId = getId(auth);
-
         request.setCustomerId(customerId);
-
         Reservation createReservation = reservationService.createReservation(request);
 
         return ResponseEntity
@@ -47,9 +45,9 @@ public class ReservationRestController {
     @GetMapping("/getAllCustomerReservation")
     public ResponseEntity<List<GetAllCustomerReservationsDto>> getAllCustomerReservation(Authentication auth) {
         Long id = getId(auth);
-
         if (id == null) {
             System.out.println("id is null");
+
             return ResponseEntity.status(302)
                     .header(
                             "Location",
@@ -58,9 +56,7 @@ public class ReservationRestController {
         }
 
         List<GetAllCustomerReservationsDto> listDto = reservationService.getAllReservationByCustomerId(id);
-
         System.out.println("RESERVATIONS FOUND = " + listDto.size());
-
         return ResponseEntity.ok(listDto);
     }
 
@@ -88,11 +84,13 @@ public class ReservationRestController {
                 );
     }
 
+    //Customer don't need authorization to check available rooms
     @GetMapping()
     public List<Room> getAvailableRooms(
             @RequestParam @NotNull LocalDate checkIn,
             @RequestParam @NotNull LocalDate checkOut,
             @RequestParam @Min(1) int guests) {
+
         return reservationService
                 .getAvailableRooms(
                         checkIn,
