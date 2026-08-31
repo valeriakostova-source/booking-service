@@ -213,9 +213,13 @@ public class ReservationService {
                 );
     }
 
-    public Reservation updateReservation(Long reservationId, LocalDate checkIn, LocalDate checkOut) {
+    public Reservation updateReservation(Long reservationId,Long customerId, LocalDate checkIn, LocalDate checkOut) {
 
         Reservation reservation = getReservationById(reservationId);
+
+        if (!reservation.getCustomerId().equals(customerId)){
+            throw new ForbiddenException("You cannot update another customer's reservation");
+        }
 
         validationRoomIsAvailable(
                 reservation.getRoom().getId(),
@@ -225,7 +229,6 @@ public class ReservationService {
         );
 
         reservation.setCheckIn(checkIn);
-
         reservation.setCheckOut(checkOut);
 
         reservation.setTotalCost(

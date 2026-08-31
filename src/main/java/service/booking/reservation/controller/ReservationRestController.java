@@ -75,11 +75,14 @@ public class ReservationRestController {
     }
 
     @PutMapping("/{reservationId}")
-    public ResponseEntity<Reservation> updateReservation(@PathVariable Long reservationId, @Valid @RequestBody UpdateReservationRequest request) {
+    public ResponseEntity<Reservation> updateReservation(@PathVariable Long reservationId, @Valid @RequestBody UpdateReservationRequest request, Authentication auth) {
+        Long customerId = getId(auth);
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(
                         reservationService.updateReservation(
                                 reservationId,
+                                customerId,
                                 request.getCheckIn(),
                                 request.getCheckOut())
                 );
