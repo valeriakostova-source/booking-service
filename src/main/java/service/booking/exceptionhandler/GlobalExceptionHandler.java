@@ -1,6 +1,7 @@
 package service.booking.exceptionhandler;
 
 import service.booking.exceptionhandler.customexeptions.AlreadyExistException;
+import service.booking.exceptionhandler.customexeptions.ForbiddenException;
 import service.booking.exceptionhandler.customexeptions.HaveReservationException;
 import service.booking.exceptionhandler.customexeptions.WrongEmailOrPasswordException;
 
@@ -84,6 +85,13 @@ public class GlobalExceptionHandler {
                 ).body(
                         e.getMessage()
                 );
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<String> handleForbiddenException(ForbiddenException ex) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ex.getMessage());
     }
 
 }

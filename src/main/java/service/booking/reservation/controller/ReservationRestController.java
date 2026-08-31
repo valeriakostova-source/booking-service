@@ -65,11 +65,12 @@ public class ReservationRestController {
     }
 
     @DeleteMapping("/{reservationId}")
-    public ResponseEntity<Reservation> cancelReservation(@PathVariable Long reservationId) {
+    public ResponseEntity<Reservation> cancelReservation(@PathVariable Long reservationId, Authentication auth) {
+        Long customerId = getId(auth);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(
-                        reservationService.cancelReservation(reservationId)
+                        reservationService.cancelReservation(reservationId, customerId)
                 );
     }
 
