@@ -10,4 +10,6 @@ spring:
 
   jpa.hibernate.ddl-auto: update
 
+jwt.secret: E5rhvRHwv6FObENJPJWi2rZU1kGwLL5kZ7E3Fgi6hhk
+
 

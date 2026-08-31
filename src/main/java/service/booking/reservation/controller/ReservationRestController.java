@@ -1,10 +1,10 @@
 package service.booking.reservation.controller;
 
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
+import org.springframework.security.core.Authentication;
 import service.booking.reservation.model.CreateReservationRequest;
 import service.booking.reservation.model.Reservation;
 import service.booking.reservation.model.UpdateReservationRequest;
@@ -29,11 +29,8 @@ public class ReservationRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(@Valid @RequestBody CreateReservationRequest request, HttpSession session) {
-        Long customerId = (Long) session
-                .getAttribute(
-                        "customerId"
-                );
+    public ResponseEntity<Reservation> createReservation(@Valid @RequestBody CreateReservationRequest request, Authentication auth) {
+        Long customerId = getId(auth);
 
         request.setCustomerId(customerId);
 
@@ -48,8 +45,8 @@ public class ReservationRestController {
     }
 
     @GetMapping("/getAllCustomerReservation")
-    public ResponseEntity<List<GetAllCustomerReservationsDto>> getAllCustomerReservation(HttpSession session) {
-        Long id = (Long) session.getAttribute("customerId");
+    public ResponseEntity<List<GetAllCustomerReservationsDto>> getAllCustomerReservation(Authentication auth) {
+        Long id = getId(auth);
 
         if (id == null) {
             System.out.println("id is null");
@@ -77,7 +74,7 @@ public class ReservationRestController {
     }
 
     @PutMapping("/{reservationId}")
-    public ResponseEntity<Reservation> updateReservation (@PathVariable Long reservationId, @Valid @RequestBody UpdateReservationRequest request){
+    public ResponseEntity<Reservation> updateReservation(@PathVariable Long reservationId, @Valid @RequestBody UpdateReservationRequest request) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(
                         reservationService.updateReservation(
@@ -91,9 +88,8 @@ public class ReservationRestController {
     public List<Room> getAvailableRooms(
             @RequestParam @NotNull LocalDate checkIn,
             @RequestParam @NotNull LocalDate checkOut,
-            @RequestParam @Min(1) int guests)      
-    {
-        return  reservationService
+            @RequestParam @Min(1) int guests) {
+        return reservationService
                 .getAvailableRooms(
                         checkIn,
                         checkOut,
@@ -101,13 +97,12 @@ public class ReservationRestController {
                 );
     }
 
-    @GetMapping ("/has-active-booking/{customerId}")
-    public boolean hasActiveReservation(@PathVariable Long customerId){
-        return reservationService.hasActiveReservation(customerId);
-
+    @GetMapping("/has-active-booking")
+    public boolean hasActiveReservation(Authentication auth) {
+        return reservationService.hasActiveReservation(getId(auth));
     }
 
-
-
-
+     private Long getId(Authentication authentication) {
+        return Long.parseLong(authentication.getName());
+    }
 }
