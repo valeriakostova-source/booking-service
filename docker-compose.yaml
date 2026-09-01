@@ -1,0 +1,24 @@
+services:
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: Bookingservice
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  booking-service:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      JWT_SECRET: ${JWT_SECRET}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/Bookingservice
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
