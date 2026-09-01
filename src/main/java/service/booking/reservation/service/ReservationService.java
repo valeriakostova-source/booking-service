@@ -3,6 +3,7 @@ package service.booking.reservation.service;
 import jakarta.transaction.Transactional;
 
 import org.springframework.security.core.Authentication;
+import service.booking.customerapi.CustomerClient;
 import service.booking.exceptionhandler.customexeptions.ForbiddenException;
 import service.booking.exceptionhandler.customexeptions.NotFoundException;
 import service.booking.reservation.model.CreateReservationRequest;
@@ -29,11 +30,13 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
     private final RoomService roomService;
+    private final CustomerClient customerClient;
 
-    public ReservationService(ReservationRepository reservationRepository,  RoomRepository roomRepository, RoomService roomService) {
+    public ReservationService(ReservationRepository reservationRepository, RoomRepository roomRepository, RoomService roomService, CustomerClient customerClient) {
         this.reservationRepository = reservationRepository;
         this.roomRepository = roomRepository;
         this.roomService = roomService;
+        this.customerClient = customerClient;
     }
 
     public List<Reservation> getAllReservations() {
@@ -72,11 +75,10 @@ public class ReservationService {
     @Transactional
     public Reservation createReservation(CreateReservationRequest request) {
 
-//        Customer customer = customerRepository
-//                .findById(request.getCustomerId())
-//                .orElseThrow(
-//                        () -> new NotFoundException("Kunden finns inte")
-//                );
+
+        if (!customerClient.customerExists(request.getCustomerId())){
+            throw new NotFoundException("Customer not found");
+        }
 
         Room room = roomRepository
                 .findById(request.getRoomId())
