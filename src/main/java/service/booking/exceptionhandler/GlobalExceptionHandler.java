@@ -1,9 +1,6 @@
 package service.booking.exceptionhandler;
 
-import service.booking.exceptionhandler.customexeptions.AlreadyExistException;
-import service.booking.exceptionhandler.customexeptions.ForbiddenException;
-import service.booking.exceptionhandler.customexeptions.HaveReservationException;
-import service.booking.exceptionhandler.customexeptions.WrongEmailOrPasswordException;
+import service.booking.exceptionhandler.customexeptions.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -91,6 +88,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleForbiddenException(ForbiddenException ex) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> handleNotFoundException(NotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
     }
 
