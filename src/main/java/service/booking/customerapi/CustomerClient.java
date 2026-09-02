@@ -9,7 +9,7 @@ public class CustomerClient {
 
     public CustomerClient() {
         this.restClient = RestClient.builder()
-                .baseUrl("http://localhost:8081")
+                .baseUrl("http://customer-service:8081/customer")
                 .build();
     }
 
