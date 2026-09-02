@@ -25,10 +25,19 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(a -> a
+                        .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reservation")
-                        .permitAll().anyRequest().authenticated())
-                        .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
-                        .addFilterBefore(jwt, UsernamePasswordAuthenticationFilter.class)
-                        .build();
+                        .permitAll()
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
+                .addFilterBefore(jwt, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 }
