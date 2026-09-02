@@ -1,6 +1,5 @@
 package service.booking.controller;
 
-import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,41 +22,20 @@ public class PageController {
         return "register";
     }
 
-    @GetMapping("/mypage")
-    public String myPage(HttpSession session, Model model) {
-        Long id = (Long) session.getAttribute("customerId");
-        if (id == null) {
-            return "login";
-        }
-//        try {
-//            CustomerInfoRequest customer = pageService.getCustomer(id);
-//            model.addAttribute("customer", customer);
-//            return "my_page";
-//        } catch (NotFoundException e) {
-//            session.invalidate();
-            return "login";
-//        }
-    }
-
     @GetMapping("/reservation")
-    public String reservation(HttpSession session, Model model) {
-        Long id = (Long) session.getAttribute("customerId");
-        if (id == null) {
-            return "login";
-        }
+    public String reservation(Model model) {
         model.addAttribute("message", "Here you can make reservation");
         return "reservation";
+    }
+
+    @GetMapping("/mypage")
+    public String myPage() {
+        return "my_page";
     }
 
     @GetMapping("/updateCustomer")
     public String editCustomerPage() {
         return "update_customer";
-    }
-
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login";
     }
 
     @GetMapping("/deleteAccount")
@@ -66,13 +44,12 @@ public class PageController {
     }
 
     @GetMapping("/myReservations")
-    public String myReservations(HttpSession session) {
-        Long id = (Long) session.getAttribute("customerId");
-
-        if (id == null) {
-            return "login";
-        }
+    public String myReservations() {
         return "my_reservation";
+    }
 
+    @GetMapping("/logout")
+    public String logout() {
+        return "redirect:/login";
     }
 }

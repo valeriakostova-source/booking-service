@@ -98,6 +98,11 @@ async function createReservation(roomId) {
     })
 
     if (!response.ok) {
+        if (response.status === 403) {
+            alert("You need to be logged in to make a reservation.");
+            window.location.replace("/login");
+            return;
+        }
         const errorMessage = await response.text();
         alert(errorMessage);
         return;
