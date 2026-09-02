@@ -14,6 +14,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     private final JwtFilter jwt;
 
     public SecurityConfig(JwtFilter jwt) {
@@ -24,19 +25,15 @@ public class SecurityConfig {
     public SecurityFilterChain chain(HttpSecurity http) {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(a -> a
-                        .requestMatchers(
-                                "/",
-                                "/index.html",
-                                "/css/**",
-                                "/js/**",
-                                "/images/**"
-                        ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/reservation")
-                        .permitAll()
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests(auth -> auth
+                        // Public GET endpoint for available rooms
+                        .requestMatchers(HttpMethod.GET, "/api/reservation").permitAll()
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().permitAll()
                 )
-                .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
+                // REST API uses JWT, so we don't need HTTP sessions
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+                // Check JWT before standard authentication filter
                 .addFilterBefore(jwt, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
