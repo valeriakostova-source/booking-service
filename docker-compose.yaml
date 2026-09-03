@@ -1,24 +1,61 @@
 services:
 
-  mysql:
+  booking-mysql:
     image: mysql:8.0
+    container_name: booking-db
+    env_file: .env
     environment:
       MYSQL_DATABASE: Bookingservice
       MYSQL_ROOT_PASSWORD: ${DB_PASS}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - mysql_data:/var/lib/mysql
 
   booking-service:
     build: .
+    container_name: booking-service
     ports:
       - "8080:8080"
     environment:
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
       JWT_SECRET: ${JWT_SECRET}
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/Bookingservice
+      SPRING_DATASOURCE_URL: jdbc:mysql://booking-mysql:3306/Bookingservice
     depends_on:
-      - mysql
+      booking-mysql:
+        condition: service_healthy
+
+  customer-mysql:
+    image: mysql:8.0
+    container_name: customer-db
+    env_file: .env
+    environment:
+      MYSQL_DATABASE: Customerservice
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  customer-service:
+    image: customer-service:latest
+    container_name: customer-service
+    ports:
+      - "8081:8081"
+    env_file: .env
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      SPRING_DATASOURCE_URL: jdbc:mysql://customer-mysql:3306/Customerservice
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASS}
+    depends_on:
+      customer-mysql:
+        condition: service_healthy
 
 volumes:
   mysql_data:

@@ -11,7 +11,6 @@ public class AddNewRoomDto {
     @Positive(message = "Room number cant be 0 or below")
     private int roomNumber;
 
-    @Positive(message = "Room size can't be 0 or below")
     private String roomType;
 
     @PositiveOrZero(message = "Price can't be negative")

@@ -1,4 +1,5 @@
 package service.booking.customerapi;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -9,11 +10,11 @@ public class CustomerClient {
 
     public CustomerClient() {
         this.restClient = RestClient.builder()
-                .baseUrl("http://customer-service:8081/customer")
+                .baseUrl("http://localhost:8081")
                 .build();
     }
 
-        public boolean customerExists(Long customerId) {
+    public boolean customerExists(Long customerId) {
 
         //ToDo After customer service will be done check if url is correct
 

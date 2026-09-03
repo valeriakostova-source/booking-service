@@ -15,7 +15,7 @@ async function registerCustomer() {
     document.getElementById("phoneNumber_error").innerText = "";
     document.getElementById("password_error").innerText = "";
 
-    const response = await fetch("/api/customers", {
+    const response = await fetch("http://localhost:8081/api/customers", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
