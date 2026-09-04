@@ -3,6 +3,7 @@ package service.booking.reservation.service;
 import jakarta.transaction.Transactional;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.RequestHeader;
 import service.booking.customerapi.CustomerClient;
 import service.booking.exceptionhandler.customexeptions.ForbiddenException;
 import service.booking.exceptionhandler.customexeptions.NotFoundException;
@@ -73,12 +74,11 @@ public class ReservationService {
 
 
     @Transactional
-    public Reservation createReservation(CreateReservationRequest request) {
+    public Reservation createReservation(CreateReservationRequest request, String jwt) {
 
-
-        if (!customerClient.customerExists(request.getCustomerId())){
-            throw new NotFoundException("Customer not found");
-        }
+//        if (!customerClient.customerExists(jwt)){
+//            throw new NotFoundException("Customer not found");
+//        }
 
         Room room = roomRepository
                 .findById(request.getRoomId())

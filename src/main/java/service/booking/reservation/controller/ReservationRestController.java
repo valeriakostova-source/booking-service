@@ -29,10 +29,10 @@ public class ReservationRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(@Valid @RequestBody CreateReservationRequest request, Authentication auth) {
+    public ResponseEntity<Reservation> createReservation(@Valid @RequestBody CreateReservationRequest request, Authentication auth, @RequestHeader("Authorization") String jwt) {
         Long customerId = getId(auth);
         request.setCustomerId(customerId);
-        Reservation createReservation = reservationService.createReservation(request);
+        Reservation createReservation = reservationService.createReservation(request, jwt);
 
         return ResponseEntity
                 .status(
@@ -102,6 +102,11 @@ public class ReservationRestController {
     @GetMapping("/has-active-booking")
     public boolean hasActiveReservation(Authentication auth) {
         return reservationService.hasActiveReservation(getId(auth));
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        return "test";
     }
 
      private Long getId(Authentication authentication) {
