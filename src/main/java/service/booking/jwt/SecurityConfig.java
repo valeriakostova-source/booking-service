@@ -15,10 +15,10 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final JwtFilter jwt;
+    private final JwtFilter jwtFilter;
 
-    public SecurityConfig(JwtFilter jwt) {
-        this.jwt = jwt;
+    public SecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
     }
 
     @Bean
@@ -34,7 +34,7 @@ public class SecurityConfig {
                 // REST API uses JWT, so we don't need HTTP sessions
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 // Check JWT before standard authentication filter
-                .addFilterBefore(jwt, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }
