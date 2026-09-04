@@ -3,17 +3,18 @@ services:
   booking-mysql:
     image: mysql:8.0
     container_name: booking-db
-    env_file: .env
     environment:
       MYSQL_DATABASE: Bookingservice
-      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${BOOKING_DB_ROOT_PASS}
+      MYSQL_USER: ${BOOKING_DB_USER}
+      MYSQL_PASSWORD: ${BOOKING_DB_PASS}
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "--protocol=tcp"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
     volumes:
-      - mysql_data:/var/lib/mysql
+      - booking_mysql_data:/var/lib/mysql
 
   booking-service:
     build: .
@@ -21,8 +22,8 @@ services:
     ports:
       - "8082:8080"
     environment:
-      DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASS}
+      DB_USER: ${BOOKING_DB_USER}
+      DB_PASS: ${BOOKING_DB_PASS}
       JWT_SECRET: ${JWT_SECRET}
       SPRING_DATASOURCE_URL: jdbc:mysql://booking-mysql:3306/Bookingservice
     depends_on:
@@ -32,30 +33,33 @@ services:
   customer-mysql:
     image: mysql:8.0
     container_name: customer-db
-    env_file: .env
     environment:
       MYSQL_DATABASE: Customerservice
-      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${CUSTOMER_DB_ROOT_PASS}
+      MYSQL_USER: ${CUSTOMER_DB_USER}
+      MYSQL_PASSWORD: ${CUSTOMER_DB_PASS}
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "--protocol=tcp"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+    volumes:
+      - customer_mysql_data:/var/lib/mysql
 
   customer-service:
     image: customer-service:latest
     container_name: customer-service
     ports:
       - "8081:8081"
-    env_file: .env
     environment:
       JWT_SECRET: ${JWT_SECRET}
       SPRING_DATASOURCE_URL: jdbc:mysql://customer-mysql:3306/Customerservice
-      SPRING_DATASOURCE_USERNAME: ${DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASS}
+      SPRING_DATASOURCE_USERNAME: ${CUSTOMER_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${CUSTOMER_DB_PASS}
     depends_on:
       customer-mysql:
         condition: service_healthy
 
 volumes:
-  mysql_data:
+  booking_mysql_data:
+  customer_mysql_data:
