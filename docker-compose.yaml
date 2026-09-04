@@ -60,6 +60,38 @@ services:
       customer-mysql:
         condition: service_healthy
 
+  review-db:
+    image: mysql:8.0
+    container_name: review-db
+    environment:
+      MYSQL_DATABASE: Review-service
+      MYSQL_ROOT_PASSWORD: ${REVIEW_DB_ROOT_PASS}
+      MYSQL_USER: ${REVIEW_DB_USER}
+      MYSQL_PASSWORD: ${REVIEW_DB_PASS}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-P", "3306", "--protocol=tcp"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - review_mysql_data:/var/lib/mysql
+
+
+  review-service:
+    image: sleepingfores7s/booking-review:latest
+    container_name: review-service
+    ports:
+      - "8083:8083"
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      SPRING_DATASOURCE_URL: jdbc:mysql://review-db:3306/Review-service
+      SPRING_DATASOURCE_USERNAME: ${REVIEW_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${REVIEW_DB_PASS}
+    depends_on:
+      review-db:
+        condition: service_healthy
+
 volumes:
   booking_mysql_data:
   customer_mysql_data:
+  review_mysql_data:
