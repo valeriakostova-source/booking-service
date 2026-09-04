@@ -14,12 +14,12 @@ public class CustomerClient {
                 .build();
     }
 
-    public boolean customerExists(Long customerId) {
-
+    public boolean customerExists(String jwt) {
         //ToDo After customer service will be done check if url is correct
 
         Boolean exists = restClient.get()
-                .uri("/api/customers/{customerId}/exists", customerId)
+                .uri("/api/customers/exists")
+                .header("Authorization", jwt)
                 .retrieve()
                 .body(Boolean.class);
 
