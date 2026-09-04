@@ -14,27 +14,42 @@ import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-    private final JwtService jwt;
+    private final JwtService jwtService;
 
-    public JwtFilter(JwtService jwt) {
-        this.jwt = jwt;
+    public JwtFilter(JwtService jwtService) {
+        this.jwtService = jwtService;
     }
 
+//    @Override
+//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+//        String header = request.getHeader("Authorization");
+//        if (header != null && header.startsWith("Bearer ")) {
+//            String token = header.substring(7);
+//            if (jwt.isTokenValid(token)) {
+//                Long customerId = jwt.extractCustomerId(token);
+//                var authenticationToken = new UsernamePasswordAuthenticationToken(customerId, null, List.of());
+//
+//                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+//            }
+//        }
+//
+//        filterChain.doFilter(request, response);
+//    }
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain) throws ServletException, IOException {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-            if (jwt.isTokenValid(token)) {
-                Long customerId = jwt.extractCustomerId(token);
-                var authenticationToken = new UsernamePasswordAuthenticationToken(customerId, null, List.of());
-
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            if (jwtService.isTokenValid(token)) {
+                var userId = jwtService.extractUserId(token);
+                var auth = new UsernamePasswordAuthenticationToken(userId, null, List.of());
+                SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
-
-        filterChain.doFilter(request, response);
+        chain.doFilter(request, response);
     }
-
 
 }
