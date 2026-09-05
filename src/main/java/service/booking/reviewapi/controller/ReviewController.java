@@ -25,13 +25,8 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/user")
-    public List<ReviewResponseDto> getAllReviewsByUser(@RequestHeader("Authorization") String authHeader) {
-        return reviewClient.getUserReviewsById(authHeader);
-    }
-
-    @PostMapping("/reviews")
-    public ReviewResponseDto createNewReview() {
-        return null;
+    public List<ReviewResponseDto> getReviewsFromUser(@RequestHeader("Authorization") String token) {
+        return reviewClient.getReviewsFromUserId(token);
     }
 
 }

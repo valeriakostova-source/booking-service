@@ -37,18 +37,14 @@ public class ReviewClient {
                 .body(new ParameterizedTypeReference<List<ReviewResponseDto>>() {});
     }
 
-    public List<ReviewResponseDto> getUserReviewsById(String authHeader) {
+    public List<ReviewResponseDto> getReviewsFromUserId(String token) {
         return restClient.get()
                 .uri("/reviews/user")
-                .header("Authorization", formatBearerToken(authHeader))
+                .header("Authorization", formatBearerToken(token))
                 .retrieve()
                 .body(new ParameterizedTypeReference<List<ReviewResponseDto>>() {});
     }
 
-
-
-
-    //Filter Token so it doesnt become "Bearer Bearer <token>"
     private String formatBearerToken(String token) {
         if (token != null && token.startsWith("Bearer ")) {
             return token;
