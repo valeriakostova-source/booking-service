@@ -1,9 +1,7 @@
 package service.booking.reservation.service;
 
 import jakarta.transaction.Transactional;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.stereotype.Service;
 import service.booking.customerapi.CustomerClient;
 import service.booking.exceptionhandler.customexeptions.ForbiddenException;
 import service.booking.exceptionhandler.customexeptions.NotFoundException;
@@ -15,7 +13,6 @@ import service.booking.reservation.repository.ReservationRepository;
 import service.booking.roomapi.entity.Room;
 import service.booking.roomapi.repository.RoomRepository;
 import service.booking.roomapi.service.RoomService;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
