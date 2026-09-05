@@ -2,6 +2,7 @@ package service.booking.jwt;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,10 +27,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         // Public GET endpoint for available rooms
-//                        .requestMatchers(HttpMethod.GET, "/api/reservation").permitAll()
-//                        .requestMatchers("/api/reservation/test").permitAll()
-//                        .requestMatchers("/connect/create").permitAll()
-//                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/reservation").permitAll()
+                        .requestMatchers("/api/reservation/test").permitAll()
+                        .requestMatchers("/connect/create").permitAll()
+                        .requestMatchers("/connect/**").authenticated()
+                        .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 // REST API uses JWT, so we don't need HTTP sessions
