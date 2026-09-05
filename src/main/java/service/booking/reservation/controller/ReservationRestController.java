@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import service.booking.reservation.model.CreateReservationRequest;
 import service.booking.reservation.model.Reservation;
 import service.booking.reservation.model.UpdateReservationRequest;
@@ -31,9 +31,8 @@ public class ReservationRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(@Valid @RequestBody CreateReservationRequest request, Authentication auth, @RequestHeader("Authorization") String jwt) {
-        Long customerId = getId(auth);
-        request.setCustomerId(customerId);
+    public ResponseEntity<Reservation> createReservation(@Valid @RequestBody CreateReservationRequest request, @AuthenticationPrincipal Long userId, @RequestHeader("Authorization") String jwt) {
+        request.setCustomerId(userId);
         Reservation createReservation = reservationService.createReservation(request, jwt);
 
         return ResponseEntity
@@ -45,10 +44,10 @@ public class ReservationRestController {
     }
 
     @GetMapping("/getAllCustomerReservation")
-    public ResponseEntity<List<GetAllCustomerReservationsDto>> getAllCustomerReservation(Authentication auth) {
-        Long id = getId(auth);
-        if (id == null) {
-            System.out.println("id is null");
+    public ResponseEntity<List<GetAllCustomerReservationsDto>> getAllCustomerReservation(@AuthenticationPrincipal Long userId) {
+
+        if (userId == null) {
+            System.err.println("id is null");
 
             return ResponseEntity.status(302)
                     .header(
@@ -57,30 +56,26 @@ public class ReservationRestController {
                     ).build();
         }
 
-        List<GetAllCustomerReservationsDto> listDto = reservationService.getAllReservationByCustomerId(id);
-        System.out.println("RESERVATIONS FOUND = " + listDto.size());
+        List<GetAllCustomerReservationsDto> listDto = reservationService.getAllReservationByCustomerId(userId);
+        System.err.println("RESERVATIONS FOUND = " + listDto.size());
         return ResponseEntity.ok(listDto);
     }
 
     @DeleteMapping("/{reservationId}")
-    public ResponseEntity<Reservation> cancelReservation(@PathVariable Long reservationId, Authentication auth) {
-        Long customerId = getId(auth);
-
+    public ResponseEntity<Reservation> cancelReservation(@PathVariable Long reservationId, @AuthenticationPrincipal Long userId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(
-                        reservationService.cancelReservation(reservationId, customerId)
+                        reservationService.cancelReservation(reservationId, userId)
                 );
     }
 
     @PutMapping("/{reservationId}")
-    public ResponseEntity<Reservation> updateReservation(@PathVariable Long reservationId, @Valid @RequestBody UpdateReservationRequest request, Authentication auth) {
-        Long customerId = getId(auth);
-
+    public ResponseEntity<Reservation> updateReservation(@PathVariable Long reservationId, @Valid @RequestBody UpdateReservationRequest request, @AuthenticationPrincipal Long userId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(
                         reservationService.updateReservation(
                                 reservationId,
-                                customerId,
+                                userId,
                                 request.getCheckIn(),
                                 request.getCheckOut())
                 );
@@ -102,8 +97,8 @@ public class ReservationRestController {
     }
 
     @GetMapping("/has-active-booking")
-    public boolean hasActiveReservation(Authentication auth) {
-        return reservationService.hasActiveReservation(getId(auth));
+    public boolean hasActiveReservation(@AuthenticationPrincipal Long userId) {
+        return reservationService.hasActiveReservation(userId);
     }
 
     @GetMapping("/test")
@@ -111,7 +106,4 @@ public class ReservationRestController {
         return new ReviewClient().getAllReviews(authHeader);
     }
 
-     private Long getId(Authentication authentication) {
-        return Long.parseLong(authentication.getName());
-    }
 }
