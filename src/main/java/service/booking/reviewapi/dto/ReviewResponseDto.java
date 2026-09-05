@@ -1,4 +1,4 @@
-package service.booking.customerapi.dto;
+package service.booking.reviewapi.dto;
 
 import java.time.LocalDateTime;
 

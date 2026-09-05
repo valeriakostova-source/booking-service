@@ -10,6 +10,8 @@ import service.booking.reservation.model.Reservation;
 import service.booking.reservation.model.UpdateReservationRequest;
 import service.booking.reservation.model.dto.GetAllCustomerReservationsDto;
 import service.booking.reservation.service.ReservationService;
+import service.booking.reviewapi.ReviewClient;
+import service.booking.reviewapi.dto.ReviewResponseDto;
 import service.booking.roomapi.entity.Room;
 
 import org.springframework.http.HttpStatus;
@@ -105,8 +107,9 @@ public class ReservationRestController {
     }
 
     @GetMapping("/test")
-    public String test() {
-        return "test";
+    public List<ReviewResponseDto> test(@RequestHeader("Authorization") String authHeader) {
+
+        return new ReviewClient().getAllReviews(authHeader);
     }
 
      private Long getId(Authentication authentication) {
