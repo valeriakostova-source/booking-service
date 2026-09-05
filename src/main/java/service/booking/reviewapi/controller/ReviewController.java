@@ -1,8 +1,6 @@
 package service.booking.reviewapi.controller;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import service.booking.reviewapi.client.ReviewClient;
@@ -14,24 +12,13 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewClient reviewClient;
-
     public ReviewController(ReviewClient reviewClient) {
         this.reviewClient = reviewClient;
     }
 
-    @GetMapping("/reviews")
-    public List<ReviewResponseDto> getAllReviews(@RequestHeader("Authorization") String authHeader) {
-        return reviewClient.getAllReviews(authHeader);
-    }
-
     @GetMapping("/reviews/user")
-    public List<ReviewResponseDto> getAllReviewsByUser(@RequestHeader("Authorization") String authHeader) {
-        return reviewClient.getUserReviewsById(authHeader);
-    }
-
-    @PostMapping("/reviews")
-    public ReviewResponseDto createNewReview() {
-        return null;
+    public List<ReviewResponseDto> getReviewsFromUser(@RequestHeader("Authorization") String token) {
+        return reviewClient.getReviewsFromUserId(token);
     }
 
 }
