@@ -14,8 +14,9 @@ async function registerCustomer() {
     document.getElementById("email_error").innerText = "";
     document.getElementById("phoneNumber_error").innerText = "";
     document.getElementById("password_error").innerText = "";
+    document.getElementById("result_message").innerText="";
 
-    const response = await fetch("http://localhost:8081/api/customers", {
+    const response = await fetch("/connect/create", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
@@ -31,7 +32,7 @@ async function registerCustomer() {
     const data = await response.json();
 
     if (response.ok) {
-        window.location.href = "/mypage";
+        window.location.href = "/login";
         return;
     }
 
@@ -46,5 +47,6 @@ async function registerCustomer() {
         return;
     }
 
+    document.getElementById("result_message").innerText = data.message || "failed to register";
     alert("Failed to register");
 }

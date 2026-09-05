@@ -28,6 +28,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public GET endpoint for available rooms
                         .requestMatchers(HttpMethod.GET, "/api/reservation").permitAll()
+                        .requestMatchers("/api/reservation/test").permitAll()
+                        .requestMatchers("/connect/create").permitAll()
+                        .requestMatchers("/connect/**").authenticated()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 )

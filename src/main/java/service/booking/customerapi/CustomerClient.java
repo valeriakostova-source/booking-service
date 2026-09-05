@@ -10,19 +10,19 @@ public class CustomerClient {
 
     public CustomerClient() {
         this.restClient = RestClient.builder()
-                .baseUrl("http://localhost:8081")
+                .baseUrl("http://customer-service:8081")
                 .build();
     }
 
-    public boolean customerExists(String jwt) {
-        //ToDo After customer service will be done check if url is correct
-
-        Boolean exists = restClient.get()
-                .uri("/api/customers/exists")
-                .header("Authorization", jwt)
-                .retrieve()
-                .body(Boolean.class);
-
-        return Boolean.TRUE.equals(exists);
-    }
+//    public boolean customerExists(String jwt) {
+//        //ToDo After customer service will be done check if url is correct
+//
+//        Boolean exists = restClient.get()
+//                .uri("/api/customers/exists")
+//                .header("Authorization", jwt)
+//                .retrieve()
+//                .body(Boolean.class);
+//
+//        return Boolean.TRUE.equals(exists);
+//    }
 }
