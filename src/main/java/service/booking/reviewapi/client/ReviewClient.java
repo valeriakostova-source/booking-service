@@ -1,4 +1,4 @@
-package service.booking.reviewapi;
+package service.booking.reviewapi.client;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -30,6 +30,14 @@ public class ReviewClient {
 
         return restClient.get()
                 .uri("/reviews")
+                .header("Authorization", formatBearerToken(token))
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<ReviewResponseDto>>() {});
+    }
+
+    public List<ReviewResponseDto> getReviewsFromUserId(String token) {
+        return restClient.get()
+                .uri("/reviews/user")
                 .header("Authorization", formatBearerToken(token))
                 .retrieve()
                 .body(new ParameterizedTypeReference<List<ReviewResponseDto>>() {});

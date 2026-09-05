@@ -2,9 +2,7 @@ package service.booking.reservation.service;
 
 import jakarta.transaction.Transactional;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.RequestHeader;
-import service.booking.customerapi.CustomerClient;
+import service.booking.customerapi.client.CustomerClient;
 import service.booking.exceptionhandler.customexeptions.ForbiddenException;
 import service.booking.exceptionhandler.customexeptions.NotFoundException;
 import service.booking.reservation.model.CreateReservationRequest;

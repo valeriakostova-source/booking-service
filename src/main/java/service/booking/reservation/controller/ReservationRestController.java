@@ -10,7 +10,7 @@ import service.booking.reservation.model.Reservation;
 import service.booking.reservation.model.UpdateReservationRequest;
 import service.booking.reservation.model.dto.GetAllCustomerReservationsDto;
 import service.booking.reservation.service.ReservationService;
-import service.booking.reviewapi.ReviewClient;
+import service.booking.reviewapi.client.ReviewClient;
 import service.booking.reviewapi.dto.ReviewResponseDto;
 import service.booking.roomapi.entity.Room;
 
