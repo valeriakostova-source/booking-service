@@ -1,9 +1,9 @@
 package service.booking.reviewapi;
 
-import org.springframework.security.core.Authentication;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import service.booking.customerapi.dto.ReviewResponseDto;
+import service.booking.reviewapi.dto.ReviewResponseDto;
 
 import java.util.List;
 
@@ -18,19 +18,27 @@ public class ReviewClient {
                 .build();
     }
 
-    public String test() {
+    public String test(String token) {
         return restClient.get()
                 .uri("/test")
-                .header("Authorization", "Bearer " + )
+                .header("Authorization", formatBearerToken(token))
                 .retrieve()
                 .body(String.class);
     }
 
-    public List<ReviewResponseDto> getAllReviews(Authentication  auth) {
+    public List<ReviewResponseDto> getAllReviews(String token) {
+
         return restClient.get()
                 .uri("/reviews")
-                .header("Authorize", "Bearer "+auth.)
+                .header("Authorization", formatBearerToken(token))
                 .retrieve()
-                .body(List.class);
+                .body(new ParameterizedTypeReference<List<ReviewResponseDto>>() {});
+    }
+
+    private String formatBearerToken(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            return token;
+        }
+        return "Bearer " + token;
     }
 }
