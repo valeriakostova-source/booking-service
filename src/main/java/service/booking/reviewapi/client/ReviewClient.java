@@ -5,6 +5,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.client.RestClient;
+import service.booking.reviewapi.dto.NewReviewDto;
 import service.booking.reviewapi.dto.ReviewResponseDto;
 
 import java.util.List;
@@ -44,6 +45,18 @@ public class ReviewClient {
                 .retrieve()
                 .body(new ParameterizedTypeReference<List<ReviewResponseDto>>() {});
     }
+
+    public ReviewResponseDto createNewReview(String token, NewReviewDto newReviewDto) {
+        return restClient.post()
+                .uri("/reviews")
+                .header("Authorization", formatBearerToken(token))
+                .body(newReviewDto)
+                .retrieve()
+                .body(ReviewResponseDto.class);
+    }
+
+
+
 
     private String formatBearerToken(String token) {
         if (token != null && token.startsWith("Bearer ")) {
