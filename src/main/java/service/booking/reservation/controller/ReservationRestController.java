@@ -108,7 +108,6 @@ public class ReservationRestController {
 
     @GetMapping("/test")
     public List<ReviewResponseDto> test(@RequestHeader("Authorization") String authHeader) {
-
         return new ReviewClient().getAllReviews(authHeader);
     }
 
