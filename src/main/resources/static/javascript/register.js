@@ -16,7 +16,7 @@ async function registerCustomer() {
     document.getElementById("password_error").innerText = "";
     document.getElementById("result_message").innerText="";
 
-    const response = await fetch("http://customer-service:8081/api/customer/create", {
+    const response = await fetch("/connect/create", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
@@ -32,7 +32,7 @@ async function registerCustomer() {
     const data = await response.json();
 
     if (response.ok) {
-        window.location.href = "/mypage";
+        window.location.href = "/login";
         return;
     }
 
