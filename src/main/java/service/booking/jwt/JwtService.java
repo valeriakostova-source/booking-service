@@ -11,34 +11,36 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class JwtService {
 
-    @Value("${jwt.secret}")
-    private String secret;
+    @Value("${JWT_SECRET}")
+    private String SECRET_KEY;
 
-    public Long extractCustomerId(String token) {
-        String customerId = Jwts.parser()
+    public Long extractUserId(String token) {
+        String subject = Jwts.parser()
                 .verifyWith(getSignInKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .get("id").toString();
+                .getSubject();
 
-        return Long.parseLong(customerId);
-
-
+        return Long.valueOf(subject);
     }
 
-    public boolean isTokenValid(String token) {
+    public Boolean isTokenValid(String token) {
         try {
-            extractCustomerId(token);
+            extractUserId(token);
+            System.err.println("JWT Token valid: ");
             return true;
-        } catch (Exception e) {
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            System.err.println("JWT Token has expired: " + e.getMessage());
+            return false;
+        } catch (io.jsonwebtoken.JwtException e) {
+            System.err.println("Invalid JWT Token: " + e.getMessage());
             return false;
         }
-
     }
 
     private SecretKey getSignInKey() {
-        byte[] bytes = secret.getBytes(StandardCharsets.UTF_8);
+        byte[] bytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(bytes);
     }
 }
