@@ -9,7 +9,7 @@ async function login() {
     document.getElementById("password_error").innerText = "";
 
 
-    const response = await fetch("/api/customers/login", {
+    const response = await fetch("/auth/login", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({email, password})

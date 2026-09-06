@@ -2,7 +2,6 @@ package service.booking.reservation.service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import service.booking.customerapi.CustomerClient;
 
 import service.booking.customerapi.client.CustomerClient;
 import service.booking.exceptionhandler.customexeptions.ForbiddenException;
@@ -75,9 +74,9 @@ public class ReservationService {
     @Transactional
     public Reservation createReservation(CreateReservationRequest request, String jwt) {
 
-//        if (!customerClient.customerExists(jwt)){
-//            throw new NotFoundException("Customer not found");
-//        }
+        if (!customerClient.customerExists(jwt)){
+            throw new NotFoundException("Customer not found");
+        }
 
         Room room = roomRepository
                 .findById(request.getRoomId())

@@ -17,12 +17,12 @@ public class CustomerClient {
 
     public record CustomerExistsResponse(Boolean exists) {}
 
-    public boolean customerExists(String token, Long userId) {
+    public boolean customerExists(String token) {
         //ToDo After customer service will be done check if url is correct
         System.err.println("Customer exists: 1");
 
         Boolean response = restClient.get()
-                .uri("/api/customers/does-customer-exist/"+userId)
+                .uri("/api/customers/does-customer-exist")
                 .header("Authorization", formatBearerToken(token))
                 .retrieve()
                 .body(Boolean.class);

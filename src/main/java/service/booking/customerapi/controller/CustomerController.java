@@ -1,6 +1,5 @@
 package service.booking.customerapi.controller;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,8 +14,8 @@ public class CustomerController {
     }
 
     @GetMapping("/customer/exists")
-    public Boolean existsCustomer(@RequestHeader("Authorization") String token, @AuthenticationPrincipal Long userId) {
-        return customerClient.customerExists(token, userId);
+    public Boolean existsCustomer(@RequestHeader("Authorization") String token) {
+        return customerClient.customerExists(token);
     }
 
 }
