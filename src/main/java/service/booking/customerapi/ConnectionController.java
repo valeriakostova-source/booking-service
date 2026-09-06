@@ -13,7 +13,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import service.booking.dto.CreateCustomerRequest;
-import service.booking.dto.logindto;
 
 @RestController
 @RequestMapping("/connect")
@@ -46,7 +45,7 @@ public class ConnectionController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody logindto dto) {
+    public ResponseEntity<?> login(@RequestBody service.booking.dto.LoginDto dto) {
         try {
             return (restClient
                     .post()
