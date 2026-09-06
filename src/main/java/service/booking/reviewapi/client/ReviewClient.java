@@ -1,9 +1,7 @@
 package service.booking.reviewapi.client;
 
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.client.RestClient;
 import service.booking.reviewapi.dto.NewReviewDto;
 import service.booking.reviewapi.dto.ReviewResponseDto;
@@ -30,7 +28,6 @@ public class ReviewClient {
     }
 
     public List<ReviewResponseDto> getAllReviews(String token) {
-
         return restClient.get()
                 .uri("/reviews")
                 .header("Authorization", formatBearerToken(token))
@@ -55,7 +52,22 @@ public class ReviewClient {
                 .body(ReviewResponseDto.class);
     }
 
+    public ReviewResponseDto getReviewById(String token, Long reviewId) {
+        return restClient.get()
+                .uri("/reviews/"+reviewId)
+                .header("Authorization", formatBearerToken(token))
+                .retrieve()
+                .body(ReviewResponseDto.class);
+    }
 
+    public boolean deleteReviewById(String token, Long reviewId) {
+        return restClient.delete()
+                .uri("/reviews/"+reviewId)
+                .header("Authorization", formatBearerToken(token))
+                .retrieve()
+                .body(String.class);
+
+    }
 
 
     private String formatBearerToken(String token) {
