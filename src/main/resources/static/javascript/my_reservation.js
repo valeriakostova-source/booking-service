@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem("jwt");
     fetch("/api/reservation/getAllCustomerReservation", {
-        credentials: "include"
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
     })
         .then(response => {
             if (!response.ok) {
@@ -83,10 +86,13 @@ function saveChanges(id) {
         checkOut
     };
 
+    const token = localStorage.getItem("jwt");
     fetch(`/api/reservation/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify(body)
     })
         .then(res => {
@@ -108,9 +114,12 @@ function deleteReservation(id, btn) {
         return;
     }
 
+    const token = localStorage.getItem("jwt");
     fetch(`/api/reservation/${id}`, {
         method: "DELETE",
-        credentials: "include"
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
     })
         .then(res => {
             if (!res.ok) {
