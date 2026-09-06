@@ -37,6 +37,11 @@ public class ReviewController {
         return reviewClient.getReviewById(token, id);
     }
 
+    @GetMapping("/reviews/room/avgRating/{id}")
+    public Double getAvgRating(@RequestHeader("Authorization") String token, @PathVariable("id") Long roomId) {
+        return reviewClient.getAverageRating(token, roomId);
+    }
+
     @DeleteMapping("/reviews/{id}")
     public ResponseEntity<String>  deleteReviewById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
         ResponseEntity<Void> response =
