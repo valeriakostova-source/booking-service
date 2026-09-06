@@ -9,13 +9,14 @@ async function login() {
     document.getElementById("password_error").innerText = "";
 
 
-    const response = await fetch("/auth/login", {
+    const response = await fetch("/connect/login", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({email, password})
     });
 
     const rawValue = await response.text();
+
 
     //Parsing between text and json
     let data;
@@ -26,6 +27,7 @@ async function login() {
     }
 
     if (response.ok) {
+        localStorage.setItem("jwt", data)
         window.location.href = "/mypage";
         return;
     }
