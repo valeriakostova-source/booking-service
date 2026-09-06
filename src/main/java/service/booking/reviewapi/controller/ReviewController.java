@@ -39,12 +39,12 @@ public class ReviewController {
 
     @DeleteMapping("/reviews/{id}")
     public ResponseEntity<String>  deleteReviewById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
-        boolean result = reviewClient.deleteReviewById(token, id);
-        if (result) {
-            return ResponseEntity.ok("Review has been deleted");
-        }else  {
-            return ResponseEntity.notFound().build();
-        }
+        ResponseEntity<Void> response =
+                reviewClient.deleteReviewById(token, id);
+
+        return ResponseEntity
+                .status(response.getStatusCode())
+                .build();
 
     }
 
