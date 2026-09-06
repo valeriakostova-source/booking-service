@@ -10,6 +10,7 @@
     <link rel="stylesheet" th:href="@{/css/my_page_style.css}"/>
     <link rel="stylesheet" th:href="@{/css/interaction_button.css}">
     <!-- scripts -->
+    <script defer th:src="@{/javascript/mypage.js}"></script>
     <!-- header block -->
     <th:block th:replace="~{fragments/header :: header}"></th:block>
 </head>
@@ -18,10 +19,10 @@
     <h1>My Page</h1>
 
     <h2>Customer information:</h2>
-    <p><strong>Firstname:</strong> [[${customer.firstname}]]</p>
-    <p><strong>Lastname:</strong> [[${customer.lastname}]]</p>
-    <p><strong>Email:</strong> [[${customer.email}]]</p>
-    <p><strong>Telephone:</strong> [[${customer.phoneNumber}]]</p>
+    <p><strong>Firstname:</strong> <span id="firstname"></span></p>
+    <p><strong>Lastname:</strong> <span id="lastname"></span></p>
+    <p><strong>Email:</strong> <span id="email"></span></p>
+    <p><strong>Telephone:</strong> <span id="phone"></span></p>
 
     <a class="interaction-button" th:href="@{/updateCustomer}">update account</a>
     <a class="interaction-button" th:href="@{/myReservations}">My Reservations</a>
