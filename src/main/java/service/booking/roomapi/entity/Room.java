@@ -21,13 +21,11 @@ public class Room {
     private int roomNumber;
 
     @Column(name = "room_type", nullable = false)
-    @Positive(message = "Room size can't be 0 or Negative")
     private String roomType;
 
     @Column(name = "room_price", nullable = false)
     @PositiveOrZero
     private BigDecimal roomPrice;
-
 
     @Column(name = "max_guests", nullable = false)
     @Positive
