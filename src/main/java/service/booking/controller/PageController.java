@@ -48,6 +48,11 @@ public class PageController {
         return "my_reservation";
     }
 
+    @GetMapping("/myReviews")
+    public String myReviews() {
+        return "myReviews";
+    }
+
     @GetMapping("/logout")
     public String logout() {
         return "redirect:/login";
