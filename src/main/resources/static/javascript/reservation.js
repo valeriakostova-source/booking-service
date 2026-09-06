@@ -90,10 +90,13 @@ async function createReservation(roomId) {
         guests: guests,
 
     };
-
+    const token = localStorage.getItem("jwt");
     const response = await fetch('api/reservation', {
         method: "POST",
-        headers: {"Content-type": "application/json"},
+        headers: {
+            "Content-type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify(reservation)
     })
 
