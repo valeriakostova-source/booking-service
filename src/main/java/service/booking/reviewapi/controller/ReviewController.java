@@ -23,7 +23,7 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/user")
-    public List<ReviewResponseDto> getReviewsFromUser(@RequestHeader("Authorization") String token) {
+    public List<ReviewResponseDto> getReviewsFromUserId(@RequestHeader("Authorization") String token) {
         return reviewClient.getReviewsFromUserId(token);
     }
 
