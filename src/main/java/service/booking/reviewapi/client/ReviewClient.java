@@ -1,6 +1,7 @@
 package service.booking.reviewapi.client;
 
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import service.booking.reviewapi.dto.NewReviewDto;
@@ -60,13 +61,12 @@ public class ReviewClient {
                 .body(ReviewResponseDto.class);
     }
 
-    public boolean deleteReviewById(String token, Long reviewId) {
+    public ResponseEntity<Void> deleteReviewById(String token, Long reviewId) {
         return restClient.delete()
-                .uri("/reviews/"+reviewId)
+                .uri("/reviews/" + reviewId)
                 .header("Authorization", formatBearerToken(token))
                 .retrieve()
-                .body(String.class);
-
+                .toBodilessEntity();
     }
 
 
