@@ -12,10 +12,11 @@ async function loadMyPage() {
 
     const data = await response.json();
 
-    if (data === null || response.status === 503) {
+    if (response.status === 503) {
         document.getElementById("error_message").innerText = "customer-server is temporary down. You may not be able to " +
             "see or change customer info!";
-    } else {
+    }
+    if (!response.ok) {
         document.getElementById("error_message").innerText = data.error || "Unexpected error occur";
     }
 
