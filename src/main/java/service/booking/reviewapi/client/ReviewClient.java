@@ -61,6 +61,14 @@ public class ReviewClient {
                 .body(ReviewResponseDto.class);
     }
 
+    public Double getAverageRating(String token, Long roomId) {
+        return restClient.get()
+                .uri("/reviews/room/avgRating/"+roomId)
+                .header("Authorization", formatBearerToken(token))
+                .retrieve()
+                .body(Double.class);
+    }
+
     public ResponseEntity<Void> deleteReviewById(String token, Long reviewId) {
         return restClient.delete()
                 .uri("/reviews/" + reviewId)
@@ -76,4 +84,6 @@ public class ReviewClient {
         }
         return "Bearer " + token;
     }
+
+
 }

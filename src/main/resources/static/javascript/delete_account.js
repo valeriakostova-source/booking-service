@@ -1,7 +1,17 @@
 async function deleteYes() {
 
-    const response = await fetch("/api/customers", {
-        method: "DELETE"
+    document.getElementById("error_message").innerText = "";
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+        console.log("No JWT token found in localStorage.");
+        return;
+    }
+
+    const response = await fetch("/connect/delete", {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
     });
 
     const rawValue = await response.text();
@@ -21,13 +31,16 @@ async function deleteYes() {
     }
 
     if (response.status === 409) {
-        document.getElementById(`delete_error`).innerText = data.error; //Could not delete account
+        document.getElementById(`error_message`).innerText = "Could not delete account"; //Could not delete account
         return;
+    } else if (response.status === 503) {
+        document.getElementById("error_message").innerText = "The server is temporarily down. Please try again later.";
+        return;
+    } else {
+        document.getElementById("error_message").innerText = data.error || "Unexpected error occur";
     }
-
-    alert(`Unexpected error ${rawValue}`);
 }
 
 async function deleteNo() {
-    window.location.href = "/mypage"
+    window.location.href = "/mypage";
 }

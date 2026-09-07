@@ -2,6 +2,8 @@ package service.booking.customerapi;
 
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.http.StreamingHttpOutputMessage.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +15,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import service.booking.dto.CreateCustomerRequest;
+import service.booking.dto.CustomerInfo;
 import service.booking.dto.LoginDto;
 import service.booking.dto.UpdateDto;
 
@@ -40,8 +43,13 @@ public class ConnectionController {
             );
         } catch (HttpClientErrorException e) {
             return (ResponseEntity
-                    .status(e.getStatusCode())
+                    .status(400)
                     .body(e.getResponseBodyAsString())
+            );
+        } catch (Exception e) {
+            return (ResponseEntity
+                    .status(503)
+                    .body(e.getCause())
             );
         }
     }
@@ -57,10 +65,14 @@ public class ConnectionController {
                     .toEntity(String.class)
             );
         } catch (HttpClientErrorException e) {
-            System.err.println("catch login");
             return (ResponseEntity
-                    .status(e.getStatusCode())
+                    .status(400)
                     .body(e.getResponseBodyAsString())
+            );
+        } catch (Exception e) {
+            return (ResponseEntity
+                    .status(503)
+                    .body(e.getCause())
             );
         }
     }
@@ -68,16 +80,23 @@ public class ConnectionController {
     @GetMapping("/info")
     public ResponseEntity<?> myPageData(@RequestHeader("Authorization") String jwt) {
         try {
-            return restClient
+            RestClient.RequestHeadersSpec<?> request = (RestClient.RequestHeadersSpec<?>) restClient
                     .get()
                     .uri("/api/customers/info")
-                    .header("Authorization", jwt)
+                    .header("Authorization", jwt);
+            return (request
                     .retrieve()
-                    .toEntity(service.booking.dto.CustomerInfo.class);
+                    .toEntity(CustomerInfo.class)
+            );
         } catch (HttpClientErrorException e) {
             return (ResponseEntity
-                    .status(e.getStatusCode())
+                    .status(400)
                     .body(e.getResponseBodyAsString())
+            );
+        } catch (Exception e) {
+            return (ResponseEntity
+                    .status(503)
+                    .body(e.getCause())
             );
         }
     }
@@ -86,18 +105,47 @@ public class ConnectionController {
     public ResponseEntity<?> updateCustomerInfo(@RequestHeader("Authorization") String jwt,
                                                 @RequestBody UpdateDto update) {
         try {
-            return restClient
+            return (restClient
                     .post()
                     .uri("/api/customers/update")
                     .header("Authorization", jwt)
                     .body(update)
                     .retrieve()
-                    .toEntity(Object.class);
+                    .toEntity(Object.class)
+            );
         } catch (HttpClientErrorException e) {
-            System.err.println("catch update");
             return (ResponseEntity
-                    .status(e.getStatusCode())
+                    .status(400)
                     .body(e.getResponseBodyAsString())
+            );
+        } catch (Exception e) {
+            return (ResponseEntity
+                    .status(503)
+                    .body(e.getCause())
+            );
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteAccount(@RequestHeader("Authorization") String jwt) {
+        try {
+            RestClient.RequestHeadersSpec<?> request = (RestClient.RequestHeadersSpec<?>) restClient
+                    .delete()
+                    .uri("/api/customers/delete")
+                    .header("Authorization", jwt);
+            return (request
+                    .retrieve()
+                    .toEntity(Object.class)
+            );
+        } catch (HttpClientErrorException e) {
+            return (ResponseEntity
+                    .status(400)
+                    .body(e.getResponseBodyAsString())
+            );
+        } catch (Exception e) {
+            return (ResponseEntity
+                    .status(503)
+                    .body(e.getCause())
             );
         }
     }

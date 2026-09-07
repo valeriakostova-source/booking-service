@@ -20,22 +20,6 @@ public class JwtFilter extends OncePerRequestFilter {
         this.jwtService = jwtService;
     }
 
-//    @Override
-//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        String header = request.getHeader("Authorization");
-//        if (header != null && header.startsWith("Bearer ")) {
-//            String token = header.substring(7);
-//            if (jwt.isTokenValid(token)) {
-//                Long customerId = jwt.extractCustomerId(token);
-//                var authenticationToken = new UsernamePasswordAuthenticationToken(customerId, null, List.of());
-//
-//                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-//            }
-//        }
-//
-//        filterChain.doFilter(request, response);
-//    }
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -51,5 +35,4 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         chain.doFilter(request, response);
     }
-
 }
