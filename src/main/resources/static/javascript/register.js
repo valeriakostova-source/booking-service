@@ -48,7 +48,9 @@ async function registerCustomer() {
     } else if (response.status === 503) {
         document.getElementById("result_message").innerText = "The server is temporarily down. Please try again later.";
         return;
-    } else {
+    }
+
+    if (!response.ok) {
         document.getElementById("error_message").innerText = data.error || "Unexpected error occur";
     }
 

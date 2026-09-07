@@ -40,6 +40,10 @@ async function login() {
         return;
     }
 
+    if (!response.ok) {
+        document.getElementById("error_message").innerText = data.error || "Unexpected error occur";
+    }
+
     try {
         const errorData = JSON.parse(data);
         document.getElementById("error_message").innerText = errorData.error;
