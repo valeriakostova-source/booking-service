@@ -64,6 +64,7 @@ public class ReviewClient {
     public Double getAverageRating(String token, Long roomId) {
         return restClient.get()
                 .uri("/reviews/room/avgRating/"+roomId)
+                .header("Authorization", formatBearerToken(token))
                 .retrieve()
                 .body(Double.class);
     }

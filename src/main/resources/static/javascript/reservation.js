@@ -19,7 +19,10 @@ async function getAvailableRooms() {
         }
 
         const rooms = await response.json();
+
         renderRooms(rooms);
+
+        loadRoomRatings(rooms);
 
     } catch (error) {
         console.error('Failed to fetch rooms:', error);
@@ -64,6 +67,9 @@ function renderRooms(rooms) {
                         <p class="card-text mb-1">
                             Extra bed: ${room.extraBedAvailable ? 'Available' : 'Not available'}
                         </p>
+                        <p class="card-text mb-1">
+                            Rating: <span id="rating-room-${room.id}">Loading...</span>
+                        </p>
 
                     </div>
                 </div>
@@ -79,6 +85,36 @@ function renderRooms(rooms) {
         </div>
 
     `).join('');
+}
+
+function loadRoomRatings(rooms) {
+    rooms.forEach(async (room) => {
+        const ratingElement = document.getElementById(`rating-room-${room.id}`);
+        try {
+
+            const token = localStorage.getItem('jwt');
+
+            const response = await fetch(`/reviews/room/avgRating/${room.id}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                ratingElement.textContent = 'N/A';
+                return;
+            }
+
+            const rating = await response.json();
+
+            ratingElement.textContent = (rating && rating > 0) ? `${rating} / 5` : 'N/A';
+
+        } catch (error) {
+            console.error(`Failed to fetch rating for room ${room.id}:`, error);
+            ratingElement.textContent = 'N/A';
+        }
+    });
 }
 
 async function createReservation(roomId) {
