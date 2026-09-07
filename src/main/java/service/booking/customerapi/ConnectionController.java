@@ -60,7 +60,6 @@ public class ConnectionController {
                     .toEntity(String.class)
             );
         } catch (HttpClientErrorException e) {
-            System.err.println("catch login");
             return (ResponseEntity
                     .status(e.getStatusCode())
                     .body(e.getResponseBodyAsString())
