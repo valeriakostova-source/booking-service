@@ -1,5 +1,6 @@
 async function loadMyPage() {
 
+    document.getElementById("error_message").innerText = "";
     const token = localStorage.getItem("jwt");
 
     const response = await fetch("/connect/info", {
@@ -10,6 +11,13 @@ async function loadMyPage() {
     });
 
     const data = await response.json();
+
+    if (data === null || response.status === 503) {
+        document.getElementById("error_message").innerText = "customer-server is temporary down. You may not be able to " +
+            "see or change customer info!";
+    } else {
+        document.getElementById("error_message").innerText = data.error || "Unexpected error occur";
+    }
 
     document.getElementById("firstname").innerText = data.firstname;
     document.getElementById("lastname").innerText = data.lastname;

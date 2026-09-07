@@ -43,8 +43,13 @@ public class ConnectionController {
             );
         } catch (HttpClientErrorException e) {
             return (ResponseEntity
-                    .status(e.getStatusCode())
+                    .status(400)
                     .body(e.getResponseBodyAsString())
+            );
+        } catch (Exception e) {
+            return (ResponseEntity
+                    .status(503)
+                    .body(e.getCause())
             );
         }
     }
@@ -61,8 +66,13 @@ public class ConnectionController {
             );
         } catch (HttpClientErrorException e) {
             return (ResponseEntity
-                    .status(e.getStatusCode())
+                    .status(400)
                     .body(e.getResponseBodyAsString())
+            );
+        } catch (Exception e) {
+            return (ResponseEntity
+                    .status(503)
+                    .body(e.getCause())
             );
         }
     }
@@ -80,8 +90,13 @@ public class ConnectionController {
             );
         } catch (HttpClientErrorException e) {
             return (ResponseEntity
-                    .status(e.getStatusCode())
+                    .status(400)
                     .body(e.getResponseBodyAsString())
+            );
+        } catch (Exception e) {
+            return (ResponseEntity
+                    .status(503)
+                    .body(e.getCause())
             );
         }
     }
@@ -100,8 +115,13 @@ public class ConnectionController {
             );
         } catch (HttpClientErrorException e) {
             return (ResponseEntity
-                    .status(e.getStatusCode())
+                    .status(400)
                     .body(e.getResponseBodyAsString())
+            );
+        } catch (Exception e) {
+            return (ResponseEntity
+                    .status(503)
+                    .body(e.getCause())
             );
         }
     }
@@ -119,8 +139,13 @@ public class ConnectionController {
             );
         } catch (HttpClientErrorException e) {
             return (ResponseEntity
-                    .status(e.getStatusCode())
+                    .status(400)
                     .body(e.getResponseBodyAsString())
+            );
+        } catch (Exception e) {
+            return (ResponseEntity
+                    .status(503)
+                    .body(e.getCause())
             );
         }
     }
