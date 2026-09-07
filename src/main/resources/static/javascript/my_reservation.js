@@ -20,8 +20,12 @@ function renderReservations(reservations) {
     tbody.innerHTML = "";
 
     reservations.forEach(res => {
-        // MAIN ROW
         const row = document.createElement("tr");
+
+        // Safe boolean check for CANCELED or CANCELLED status
+        const currentStatus = res.status ? res.status.toUpperCase() : "";
+        const isCanceled = currentStatus === "CANCELED" || currentStatus === "CANCELLED";
+        const roomId = res.roomId || res.roomNumber;
 
         row.innerHTML = `
             <td>${res.checkIn}</td>
@@ -29,45 +33,109 @@ function renderReservations(reservations) {
             <td>${res.roomNumber}</td>
             <td>${res.extraBed ? "Yes" : "No"}</td>
             <td>${res.totalCost} kr</td>
-            <td class="status-${res.status.toLowerCase()}">${res.status}</td>
+            <td class="status-${currentStatus.toLowerCase()}">${res.status}</td>
             <td>
-                ${res.status !== "CANCELED" ? `
+                ${isCanceled ? `
+                    <button class="action-btn review-btn" onclick="openReviewModal(${roomId})">Make Review</button>
+                ` : `
                     <button class="action-btn edit-btn" onclick="toggleEditForm(${res.id})">Edit</button>
                     <button class="action-btn delete-btn" onclick="deleteReservation(${res.id}, this)">Delete</button>
-                ` : ""}
+                `}
             </td>
         `;
 
         tbody.appendChild(row);
 
-        // EDIT FORM ROW
-        const formRow = document.createElement("tr");
-        formRow.innerHTML = `
+        // EDIT FORM ROW (only generated for non-canceled bookings)
+        if (!isCanceled) {
+            const formRow = document.createElement("tr");
+            formRow.innerHTML = `
             <td colspan="7">
-                <div id="edit-form-${res.id}" class="edit-form">
-                
+                <div id="edit-form-${res.id}" class="edit-form" style="display:none;">
                     <h4 id="edit-title">Edit reservation</h4>
-                    
                     <div class="edit-grid">
-                    
                         <div class="date-block">
                             <label>Check-in date:</label>
                             <input type="date" id="checkIn-${res.id}" value="${res.checkIn}">
                         </div>
-                        
                         <div class="date-block">
                             <label>Check-out date:</label>
                             <input type="date" id="checkOut-${res.id}" value="${res.checkOut}">
                         </div> 
                     </div>
-                    
                     <button class="action-btn save-btn" onclick="saveChanges(${res.id})">Save changes</button>
                 </div>
             </td>
-        `;
+            `;
 
-        tbody.appendChild(formRow);
+            tbody.appendChild(formRow);
+        }
     });
+}
+
+function openReviewModal(roomId) {
+    document.getElementById("reviewRoomId").value = roomId;
+    document.getElementById("reviewContent").value = "";
+    document.getElementById("reviewScore").value = "5";
+
+    const modalEl = document.getElementById("reviewModal");
+    if (!modalEl) {
+        console.error("Modal element #reviewModal not found in DOM");
+        return;
+    }
+
+    let modal = bootstrap.Modal.getInstance(modalEl);
+    if (!modal) {
+        modal = new bootstrap.Modal(modalEl);
+    }
+
+    modal.show();
+}
+
+async function submitReview() {
+    const roomId = document.getElementById("reviewRoomId").value;
+    const reviewContent = document.getElementById("reviewContent").value;
+    const reviewScore = document.getElementById("reviewScore").value;
+    const token = localStorage.getItem("jwt");
+
+    if (!reviewContent.trim()) {
+        alert("Please write a review before submitting.");
+        return;
+    }
+
+    const payload = {
+        roomId: parseInt(roomId),
+        reviewContent: reviewContent,
+        reviewScore: parseInt(reviewScore)
+    };
+
+    try {
+        const response = await fetch("/reviews", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            alert(`Failed to submit review: ${errorText}`);
+            return;
+        }
+
+        // Close modal
+        const modalElement = document.getElementById("reviewModal");
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) modalInstance.hide();
+
+        alert("Thank you! Your review has been submitted.");
+
+    } catch (error) {
+        console.error("Error submitting review:", error);
+        alert("Something went wrong while submitting your review.");
+    }
 }
 
 // SHOW/HIDE EDIT FORM

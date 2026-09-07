@@ -3,23 +3,26 @@ async function getAvailableRooms() {
     const checkOut = document.getElementById('checkOut').value;
     const guests = document.getElementById('guests').value;
 
-    // Basic validation before sending
     if (!checkIn || !checkOut || !guests) {
         alert('Please fill in all fields.');
         return;
     }
 
-    const params = new URLSearchParams({checkIn, checkOut, guests});
+    const params = new URLSearchParams({ checkIn, checkOut, guests });
 
     try {
-        const response = await fetch(`/api/reservation?${params}`);
+        const response = await fetch(`api/reservation?${params}`);
 
         if (!response.ok) {
             console.error('Failed to fetch rooms');
+            return;
         }
 
         const rooms = await response.json();
+
         renderRooms(rooms);
+
+        loadRoomRatings(rooms);
 
     } catch (error) {
         console.error('Failed to fetch rooms:', error);
@@ -31,7 +34,7 @@ async function getAvailableRooms() {
 
 function renderRooms(rooms) {
     const grid = document.getElementById("roomsGrid");
-    if (rooms.length === 0) {
+    if (!rooms || rooms.length === 0) {
         grid.innerHTML = `
             <div class="alert alert-dark">
                 No rooms available.
@@ -44,10 +47,9 @@ function renderRooms(rooms) {
             <div class="row g-0 align-items-center">
                 <div class="col-md-3">
                     <img
-                            src="images/Black_Cat_Hotel_Room.png"
-                            class="img-fluid rounded-start room-image"
-                            alt="Room">
-
+                        src="images/Black_Cat_Hotel_Room.png"
+                        class="img-fluid rounded-start room-image"
+                        alt="Room">
                 </div>
                 <div class="col-md-7">
                     <div class="card-body py-2">
@@ -64,6 +66,9 @@ function renderRooms(rooms) {
                         <p class="card-text mb-1">
                             Extra bed: ${room.extraBedAvailable ? 'Available' : 'Not available'}
                         </p>
+                        <p class="card-text mb-1">
+                            Rating: <span id="rating-room-${room.id}">Loading...</span>
+                        </p>
 
                     </div>
                 </div>
@@ -77,18 +82,63 @@ function renderRooms(rooms) {
                 </div>
             </div>
         </div>
-
     `).join('');
 }
 
+function loadRoomRatings(rooms) {
+    rooms.forEach(async (room) => {
+        const ratingElement = document.getElementById(`rating-room-${room.id}`);
+        if (!ratingElement) return;
+
+        try {
+            const token = localStorage.getItem('jwt');
+            const headers = {};
+
+            if (token) {
+                headers["Authorization"] = `Bearer ${token}`;
+            }
+
+            const response = await fetch(`/reviews/room/avgRating/${room.roomNumber}`, {
+                method: "GET",
+                headers: headers
+            });
+
+            if (!response.ok || response.status === 204) {
+                ratingElement.textContent = 'N/A';
+                return;
+            }
+
+            const text = await response.text();
+
+            if (!text || text.trim() === "") {
+                ratingElement.textContent = 'N/A';
+                return;
+            }
+
+            // Convert string to float, then round to the nearest whole integer
+            const rawRating = parseFloat(text);
+
+            if (!isNaN(rawRating) && rawRating > 0) {
+                const roundedRating = Math.round(rawRating); // Converts e.g. 4.6 -> 5 or 4.2 -> 4
+                ratingElement.textContent = `${roundedRating} / 5`;
+            } else {
+                ratingElement.textContent = 'N/A';
+            }
+
+        } catch (error) {
+            console.error(`Failed to fetch rating for room ${room.roomNumber}:`, error);
+            ratingElement.textContent = 'N/A';
+        }
+    });
+}
+
 async function createReservation(roomId) {
-    const guests = document.getElementById("guests").value
+    const guests = document.getElementById("guests").value;
     const reservation = {
         roomId: roomId,
         checkIn: document.getElementById("checkIn").value,
         checkOut: document.getElementById("checkOut").value,
         guests: guests,
-
     };
     const token = localStorage.getItem("jwt");
     const response = await fetch('api/reservation', {
