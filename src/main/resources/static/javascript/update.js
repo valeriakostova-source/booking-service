@@ -5,36 +5,40 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", async function (event) {
         event.preventDefault(); // stoppar vanlig submit
 
-        // Rensa gamla fel
         document.getElementById("emailError").textContent = "";
         document.getElementById("phoneError").textContent = "";
 
         const formData = new FormData(form);
+        const token = localStorage.getItem("jwt");
+        const data = Object.fromEntries(formData);
 
-        const response = await fetch("/api/customers/update", {
+        console.log("\n token" + token + "\n")
+
+        const response = await fetch("/connect/update", {
             method: "POST",
-            body: formData
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
         });
 
-        // 🔥 Om inte inloggad → redirect till login
         if (response.status === 401) {
             window.location.href = "/login";
             return;
         }
 
-        const data = await response.json();
+        const responseData = await response.json();
 
-        // 🔥 Visa felmeddelanden
-        if (data.emailError) {
-            document.getElementById("emailError").textContent = data.emailError;
+        if (responseData.emailError) {
+            document.getElementById("emailError").textContent = responseData.emailError;
         }
 
-        if (data.phoneError) {
-            document.getElementById("phoneError").textContent = data.phoneError;
+        if (responseData.phoneError) {
+            document.getElementById("phoneError").textContent = responseData.phoneError;
         }
 
-        // 🔥 Om allt gick bra → redirect
-        if (data.success) {
+        if (responseData.success) {
             window.location.href = "/mypage";
         }
     });

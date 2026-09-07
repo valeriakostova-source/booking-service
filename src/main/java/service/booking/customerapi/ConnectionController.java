@@ -13,6 +13,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import service.booking.dto.CreateCustomerRequest;
+import service.booking.dto.LoginDto;
+import service.booking.dto.UpdateDto;
 
 @RestController
 @RequestMapping("/connect")
@@ -45,7 +47,7 @@ public class ConnectionController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody service.booking.dto.LoginDto dto) {
+    public ResponseEntity<?> login(@RequestBody LoginDto dto) {
         try {
             return (restClient
                     .post()
@@ -73,7 +75,30 @@ public class ConnectionController {
                     .retrieve()
                     .toEntity(service.booking.dto.CustomerInfo.class);
         } catch (HttpClientErrorException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
+            return (ResponseEntity
+                    .status(e.getStatusCode())
+                    .body(e.getResponseBodyAsString())
+            );
+        }
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<?> updateCustomerInfo(@RequestHeader("Authorization") String jwt,
+                                                @RequestBody UpdateDto update) {
+        try {
+            return restClient
+                    .post()
+                    .uri("/api/customers/update")
+                    .header("Authorization", jwt)
+                    .body(update)
+                    .retrieve()
+                    .toEntity(Object.class);
+        } catch (HttpClientErrorException e) {
+            System.err.println("catch update");
+            return (ResponseEntity
+                    .status(e.getStatusCode())
+                    .body(e.getResponseBodyAsString())
+            );
         }
     }
 }
