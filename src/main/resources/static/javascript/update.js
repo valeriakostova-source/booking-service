@@ -7,12 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById("emailError").textContent = "";
         document.getElementById("phoneError").textContent = "";
+        document.getElementById("error_message").innerText = "";
 
         const formData = new FormData(form);
         const token = localStorage.getItem("jwt");
         const data = Object.fromEntries(formData);
-
-        console.log("\n token" + token + "\n")
 
         const response = await fetch("/connect/update", {
             method: "POST",
@@ -27,6 +26,10 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = "/login";
             return;
         }
+        if (response.status === 503) {
+            document.getElementById("error_message").innerText = "The server is temporarily down. Please try again later.";
+            return;
+        }
 
         const responseData = await response.json();
 
@@ -36,6 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (responseData.phoneError) {
             document.getElementById("phoneError").textContent = responseData.phoneError;
+        }
+
+        if (!response.ok) {
+            document.getElementById("error_message").innerText = data.error || "Unexpected error occur";
         }
 
         if (responseData.success) {

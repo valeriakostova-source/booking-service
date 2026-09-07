@@ -37,7 +37,7 @@ async function registerCustomer() {
     }
 
     //Validation errors
-    if (response.status === 400 && typeof data == "object") {
+    if (response.status === 400) {
         for (const field in data) {
             const errorDiv = document.getElementById(`${field}_error`);
             if (errorDiv) {
@@ -45,8 +45,12 @@ async function registerCustomer() {
             }
         }
         return;
+    } else if (response.status === 503) {
+        document.getElementById("result_message").innerText = "The server is temporarily down. Please try again later.";
+        return;
+    } else {
+        document.getElementById("error_message").innerText = data.error || "Unexpected error occur";
     }
 
     document.getElementById("result_message").innerText = data.message || "failed to register";
-    alert("Failed to register");
 }

@@ -5,9 +5,7 @@ async function login() {
     const password = document.getElementById("password_input").value;
 
     //Clear old errors
-    document.getElementById("email_error").innerText = "";
-    document.getElementById("password_error").innerText = "";
-
+    document.getElementById("error_message").innerText = "";
 
     const response = await fetch("/connect/login", {
         method: "POST",
@@ -32,24 +30,22 @@ async function login() {
         return;
     }
 
-    //Validation errors
-    if (response.status === 400 && typeof data == "object") {
-        for (const field in data) {
-            const errorDiv = document.getElementById(`${field}_error`);
-            if (errorDiv) {
-                errorDiv.innerHTML = data[field];
-            }
-        }
+    if (response.status === 503) {
+        document.getElementById("error_message").innerText = "The server is temporarily down. Please try again later.";
         return;
     }
 
-    //Wrong Email/Password
-    if (response.status === 409) {
-        alert(data);
+    if (response.status === 400) {
+       document.getElementById("error_message").innerText = "Wrong email or password, try again"
         return;
     }
 
-    alert("Login Failed");
+    try {
+        const errorData = JSON.parse(data);
+        document.getElementById("error_message").innerText = errorData.error;
+    } catch {
+        document.getElementById("error_message").innerText = "unexpected error: " + data;
+    }
 }
 
 async function registerNewCustomer() {
