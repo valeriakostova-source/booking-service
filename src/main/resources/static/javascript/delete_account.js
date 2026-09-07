@@ -1,7 +1,16 @@
 async function deleteYes() {
 
-    const response = await fetch("/api/customers", {
-        method: "DELETE"
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+        console.log("No JWT token found in localStorage.");
+        return;
+    }
+
+    const response = await fetch("/connect/delete", {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
     });
 
     const rawValue = await response.text();
