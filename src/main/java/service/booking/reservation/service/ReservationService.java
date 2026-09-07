@@ -74,9 +74,9 @@ public class ReservationService {
     @Transactional
     public Reservation createReservation(CreateReservationRequest request, String jwt) {
 
-//        if (!customerClient.customerExists(jwt)){
-//            throw new NotFoundException("Customer not found");
-//        }
+        if (!customerClient.customerExists(jwt)){
+            throw new NotFoundException("Customer not found");
+        }
 
         Room room = roomRepository
                 .findById(request.getRoomId())
