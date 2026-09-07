@@ -33,8 +33,8 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/{id}")
-    public ReviewResponseDto getReviewById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
-        return reviewClient.getReviewById(token, id);
+    public ReviewResponseDto getReviewById(@RequestHeader("Authorization") String token, @PathVariable("id") Long roomNumber) {
+        return reviewClient.getReviewById(token, roomNumber);
     }
 
     @GetMapping("/reviews/room/avgRating/{id}")
