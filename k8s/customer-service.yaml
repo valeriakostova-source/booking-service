@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
         - name: customer-service #Container name
-          image: valeriakostova/customer-service:latest #what Program image to use
-          imagePullPolicy: Always
+          image: beatasp/booking-system-customer:latest #what Program image to use
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8083
           env:

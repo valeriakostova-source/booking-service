@@ -15,7 +15,7 @@ spec:
       containers:
         - name: review-service #Container name
           image: sleepingfores7s/booking-review:latest #what Program image to use
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8083
           env:
