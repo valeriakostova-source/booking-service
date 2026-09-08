@@ -101,9 +101,4 @@ public class ReservationRestController {
         return reservationService.hasActiveReservation(userId);
     }
 
-    @GetMapping("/test")
-    public List<ReviewResponseDto> test(@RequestHeader("Authorization") String authHeader) {
-        return new ReviewClient().getAllReviews(authHeader);
-    }
-
 }

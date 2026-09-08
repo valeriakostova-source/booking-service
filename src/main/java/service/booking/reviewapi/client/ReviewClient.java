@@ -1,8 +1,11 @@
 package service.booking.reviewapi.client;
 
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import service.booking.reviewapi.dto.NewReviewDto;
 import service.booking.reviewapi.dto.ReviewResponseDto;
@@ -14,9 +17,9 @@ public class ReviewClient {
 
     private final RestClient restClient;
 
-    public ReviewClient() {
+    public ReviewClient(@Value("${REVIEW_DB_CLIENT_URL:http://review-service:8083}") String baseUrl) {
         this.restClient = RestClient.builder()
-                .baseUrl("http://review-service:8083")
+                .baseUrl(baseUrl)
                 .build();
     }
 
@@ -33,7 +36,8 @@ public class ReviewClient {
                 .uri("/reviews")
                 .header("Authorization", formatBearerToken(token))
                 .retrieve()
-                .body(new ParameterizedTypeReference<List<ReviewResponseDto>>() {});
+                .body(new ParameterizedTypeReference<List<ReviewResponseDto>>() {
+                });
     }
 
     public List<ReviewResponseDto> getReviewsFromUserId(String token) {
@@ -41,21 +45,22 @@ public class ReviewClient {
                 .uri("/reviews/user")
                 .header("Authorization", formatBearerToken(token))
                 .retrieve()
-                .body(new ParameterizedTypeReference<List<ReviewResponseDto>>() {});
+                .body(new ParameterizedTypeReference<List<ReviewResponseDto>>() {
+                });
     }
 
     public ReviewResponseDto createNewReview(String token, NewReviewDto newReviewDto) {
-        return restClient.post()
-                .uri("/reviews")
-                .header("Authorization", formatBearerToken(token))
-                .body(newReviewDto)
-                .retrieve()
-                .body(ReviewResponseDto.class);
+            return restClient.post()
+                    .uri("/reviews")
+                    .header("Authorization", formatBearerToken(token))
+                    .body(newReviewDto)
+                    .retrieve()
+                    .body(ReviewResponseDto.class);
     }
 
     public ReviewResponseDto getReviewById(String token, Long reviewId) {
         return restClient.get()
-                .uri("/reviews/"+reviewId)
+                .uri("/reviews/" + reviewId)
                 .header("Authorization", formatBearerToken(token))
                 .retrieve()
                 .body(ReviewResponseDto.class);
@@ -63,7 +68,7 @@ public class ReviewClient {
 
     public Double getAverageRating(String token, Long roomId) {
         return restClient.get()
-                .uri("/reviews/room/avgRating/"+roomId)
+                .uri("/reviews/room/avgRating/" + roomId)
                 .header("Authorization", formatBearerToken(token))
                 .retrieve()
                 .body(Double.class);

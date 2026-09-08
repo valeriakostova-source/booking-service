@@ -1,5 +1,6 @@
 package service.booking.customerapi;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.http.StreamingHttpOutputMessage.*;
@@ -24,10 +25,10 @@ import service.booking.dto.UpdateDto;
 public class ConnectionController {
     private final RestClient restClient;
 
-    public ConnectionController() {
+    public ConnectionController(@Value("${REVIEW_DB_CLIENT_URL:http://customer-service:8081}") String baseUrl) {
         this.restClient = RestClient
                 .builder()
-                .baseUrl("http://customer-service:8081")
+                .baseUrl(baseUrl)
                 .build();
     }
 
