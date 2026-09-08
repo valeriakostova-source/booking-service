@@ -24,12 +24,11 @@ services:
     ports:
       - "8082:8082"
     environment:
-      BOOKING_DB_USER: ${BOOKING_DB_USER}
-      BOOKING_DB_PASS: ${BOOKING_DB_PASS}
-      DB_USER: ${BOOKING_DB_USER}
-      DB_PASS: ${BOOKING_DB_PASS}
+      SPRING_DATASOURCE_URL: jdbc:mysql://booking-mysql:3306/Booking-service
+      SPRING_DATASOURCE_USERNAME: ${BOOKING_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${BOOKING_DB_PASS}
       JWT_SECRET: ${JWT_SECRET}
-      SPRING_DATASOURCE_URL: jdbc:mysql://booking-mysql:3306/Bookingservice
+
     depends_on:
       booking-mysql:
         condition: service_healthy
