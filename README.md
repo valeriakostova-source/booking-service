@@ -2,45 +2,40 @@
 
 A microservice-based hotel booking application built with Spring Boot.
 
-The system consists of three main backend services:
+The system consists of three services:
 
-* **Booking Service** – manages rooms and reservations
-* **Customer Service** – manages customers and authentication
-* **Review Service** – manages customer reviews and ratings
-
-The services communicate through REST APIs and are deployed using Docker and Kubernetes.
+* **Booking Service** – main service and gateway for the application
+* **Customer Service** – manages customers and customer-related functionality
+* **Review Service** – manages reviews and ratings
 
 ## Architecture
 
 ```text
-                     Client / Frontend
-                            |
-                            v
+                    Client / Frontend
+                           |
+                           v
+                    Booking Service
+                       :8082
+                      /     \
+                     /       \
+                    v         v
+          Customer Service   Review Service
+               :8081             :8083
+                 |                 |
+                 v                 v
+               MySQL             MySQL
 
-                            |
-          +-----------------+-----------------+
-          |                 |                 |
-          v                 v                 v
-   Customer Service   Booking Service   Review Service
-        :8081              :8082             :8083
-          |                 |                 |
-          v                 v                 v
-       MySQL              MySQL             MySQL
+                    |
+                    v
+             Booking Database
+                  MySQL
 ```
 
-Nginx routes requests to the correct microservice depending on the API path.
+## Booking Service
 
-```text
-/api/customers/**  -> Customer Service
-/api/reviews/**    -> Review Service
-other requests     -> Booking Service
-```
+Booking Service is the main entry point to the application.
 
-## Services
-
-### Booking Service
-
-Responsible for rooms and reservations.
+It handles booking-related functionality and communicates with the other microservices when customer or review information is needed.
 
 Main functionality:
 
@@ -48,45 +43,72 @@ Main functionality:
 * Create reservations
 * Update reservations
 * Cancel reservations
-* Retrieve customer reservations
-* Validate customer existence through Customer Service
+* Retrieve reservations
+* Communicate with Customer Service
+* Communicate with Review Service
+* Serve the frontend
+* Act as the gateway between the frontend and the microservices
 
-Booking Service communicates with Customer Service before creating a reservation to verify that the customer exists.
+Example communication:
 
-### Customer Service
+```text
+Frontend
+   |
+   v
+Booking Service
+   |
+   +------> Customer Service
+   |
+   +------> Review Service
+   |
+   +------> Booking Database
+```
 
-Responsible for customer management and authentication.
+## Customer Service
+
+Customer Service is responsible for customer-related functionality.
 
 Main functionality:
 
-* Register customers
-* Login
+* Customer registration
 * Customer information
 * Customer validation
-* JWT authentication
+* Authentication
+* Customer database operations
 
-Other services can communicate with Customer Service through its REST API.
+Booking Service communicates with Customer Service through REST API calls.
 
-### Review Service
+Example:
 
-Responsible for reviews and ratings.
+```text
+Booking Service
+      |
+      | Check if customer exists
+      v
+Customer Service
+```
+
+## Review Service
+
+Review Service is responsible for reviews and ratings.
 
 Main functionality:
 
 * Create reviews
-* Store review content
+* Retrieve reviews
 * Store ratings
-* Connect reviews to rooms
-* Retrieve reviews and ratings
+* Connect reviews to rooms or bookings
 
-Example review request:
+Booking Service communicates with Review Service through REST API calls.
 
-```json
-{
-  "roomId": 1,
-  "reviewContent": "Very nice room and good service.",
-  "rating": 5
-}
+Example:
+
+```text
+Booking Service
+      |
+      | Get reviews / ratings
+      v
+Review Service
 ```
 
 ## Technologies
@@ -101,24 +123,19 @@ Example review request:
 * Maven
 * Docker
 * Kubernetes
-* Nginx
-* HTML / CSS / JavaScript
-
-## Docker
-
-Each microservice has its own Docker image.
-
-Example:
-
-```bash
-docker build -t booking-service:1 .
-```
-
-Docker images can be stored locally or pushed to Docker Hub.
+* HTML
+* CSS
+* JavaScript
 
 ## Kubernetes
 
-The application services can be deployed separately to Kubernetes.
+Each service runs separately in Kubernetes.
+
+```text
+booking-service
+customer-service
+review-service
+```
 
 Example:
 
@@ -128,7 +145,7 @@ kubectl apply -f customer-service.yaml
 kubectl apply -f review-service.yaml
 ```
 
-Check running pods:
+Check pods:
 
 ```bash
 kubectl get pods
@@ -154,12 +171,21 @@ kubectl logs <pod-name>
 | Booking Service  | 8082 |
 | Review Service   | 8083 |
 
+## Docker
 
-The internal Spring Boot container port may differ from the Kubernetes Service port depending on the deployment configuration.
+Each microservice has its own Docker image.
+
+Example for Booking Service:
+
+```bash
+docker build -t booking-service:1 .
+```
+
+The services can then be deployed as separate containers or Kubernetes pods.
 
 ## Environment Variables
 
-Database credentials and JWT secrets are provided through environment variables or Kubernetes Secrets.
+Sensitive configuration is provided through environment variables or Kubernetes Secrets.
 
 Example:
 
@@ -170,46 +196,18 @@ SPRING_DATASOURCE_PASSWORD
 JWT_SECRET
 ```
 
-Sensitive values should not be committed to Git.
+Passwords and secrets should not be committed to Git.
 
-## Microservice Communication
+## Service Communication
 
 The services communicate using REST APIs.
 
-Example:
-
 ```text
-Booking Service
-      |
-      | Check if customer exists
-      v
-Customer Service
+                 Booking Service
+                 /             \
+                /               \
+               v                 v
+      Customer Service       Review Service
 ```
 
-This allows each service to remain responsible for its own domain and database.
-
-## Running the Application
-
-Build the services and start the required infrastructure.
-
-For Kubernetes:
-
-```bash
-kubectl apply -f .
-```
-
-Verify that all pods are running:
-
-```bash
-kubectl get pods
-```
-
-Expected result:
-
-```text
-booking-service     Running
-customer-service    Running
-review-service      Running
-```
-
-Once the services are running, requests can be routed through Nginx to the appropriate microservice.
+Booking Service acts as the central service that connects the frontend with the other microservices.
