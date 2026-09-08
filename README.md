@@ -1,8 +1,48 @@
-# Booking Service
+# Booking System
 
-Booking Service is a Spring Boot microservice responsible for managing room reservations in the booking system.
+A microservice-based hotel booking application built with Spring Boot.
 
-## Features
+The system consists of three main backend services:
+
+* **Booking Service** – manages rooms and reservations
+* **Customer Service** – manages customers and authentication
+* **Review Service** – manages customer reviews and ratings
+
+The services communicate through REST APIs and are deployed using Docker and Kubernetes.
+
+## Architecture
+
+```text
+                     Client / Frontend
+                            |
+                            v
+                          Nginx
+                            |
+          +-----------------+-----------------+
+          |                 |                 |
+          v                 v                 v
+   Customer Service   Booking Service   Review Service
+        :8081              :8082             :8083
+          |                 |                 |
+          v                 v                 v
+       MySQL              MySQL             MySQL
+```
+
+Nginx routes requests to the correct microservice depending on the API path.
+
+```text
+/api/customers/**  -> Customer Service
+/api/reviews/**    -> Review Service
+other requests     -> Booking Service
+```
+
+## Services
+
+### Booking Service
+
+Responsible for rooms and reservations.
+
+Main functionality:
 
 * Search for available rooms
 * Create reservations
@@ -10,10 +50,44 @@ Booking Service is a Spring Boot microservice responsible for managing room rese
 * Cancel reservations
 * Retrieve customer reservations
 * Validate customer existence through Customer Service
+
+Booking Service communicates with Customer Service before creating a reservation to verify that the customer exists.
+
+### Customer Service
+
+Responsible for customer management and authentication.
+
+Main functionality:
+
+* Register customers
+* Login
+* Customer information
+* Customer validation
 * JWT authentication
-* MySQL database
-* Docker support
-* Kubernetes deployment
+
+Other services can communicate with Customer Service through its REST API.
+
+### Review Service
+
+Responsible for reviews and ratings.
+
+Main functionality:
+
+* Create reviews
+* Store review content
+* Store ratings
+* Connect reviews to rooms
+* Retrieve reviews and ratings
+
+Example review request:
+
+```json
+{
+  "roomId": 1,
+  "reviewContent": "Very nice room and good service.",
+  "rating": 5
+}
+```
 
 ## Technologies
 
@@ -21,71 +95,73 @@ Booking Service is a Spring Boot microservice responsible for managing room rese
 * Spring Boot
 * Spring Data JPA
 * Spring Security
-* MySQL
 * REST API
 * JWT
+* MySQL
+* Maven
 * Docker
 * Kubernetes
-* Maven
+* Nginx
+* HTML / CSS / JavaScript
 
-## Service Communication
+## Docker
 
-Booking Service communicates with Customer Service to verify that a customer exists before creating a reservation.
+Each microservice has its own Docker image.
 
-```text
-Client
-  |
-  v
-Booking Service
-  |
-  +----> Customer Service
-  |
-  +----> Booking Database
+Example:
+
+```bash
+docker build -t booking-service:1 .
 ```
 
-## API Endpoints
+Docker images can be stored locally or pushed to Docker Hub.
 
-### Get available rooms
+## Kubernetes
 
-```http
-GET /api/reservation
+The application services can be deployed separately to Kubernetes.
+
+Example:
+
+```bash
+kubectl apply -f booking-service.yaml
+kubectl apply -f customer-service.yaml
+kubectl apply -f review-service.yaml
 ```
 
-Example parameters:
+Check running pods:
 
-```text
-checkIn=2026-09-10
-checkOut=2026-09-15
-guests=2
+```bash
+kubectl get pods
 ```
 
-### Create reservation
+Check services:
 
-```http
-POST /api/reservation
+```bash
+kubectl get services
 ```
 
-Requires authentication.
+Check logs:
 
-### Update reservation
-
-```http
-PUT /api/reservation/{id}
+```bash
+kubectl logs <pod-name>
 ```
 
-Requires authentication.
+## Ports
 
-### Cancel reservation
+| Service          | Port |
+| ---------------- | ---: |
+| Customer Service | 8081 |
+| Booking Service  | 8082 |
+| Review Service   | 8083 |
+| Nginx            |   80 |
 
-```http
-DELETE /api/reservation/{id}
-```
+The internal Spring Boot container port may differ from the Kubernetes Service port depending on the deployment configuration.
 
-Requires authentication.
+## Environment Variables
 
-## Configuration
+Database credentials and JWT secrets are provided through environment variables or Kubernetes Secrets.
 
-The application uses environment variables for database credentials and JWT configuration.
+Example:
 
 ```text
 SPRING_DATASOURCE_URL
@@ -94,109 +170,46 @@ SPRING_DATASOURCE_PASSWORD
 JWT_SECRET
 ```
 
-## Docker
+Sensitive values should not be committed to Git.
 
-Build the Docker image:
+## Microservice Communication
 
-```bash
-docker build -t booking-service:1 .
+The services communicate using REST APIs.
+
+Example:
+
+```text
+Booking Service
+      |
+      | Check if customer exists
+      v
+Customer Service
 ```
 
-Run the application using Docker Compose if the required services and database are configured.
+This allows each service to remain responsible for its own domain and database.
 
-## Kubernetes
+## Running the Application
 
-The service can be deployed to Kubernetes using the Kubernetes configuration files.
+Build the services and start the required infrastructure.
 
-Apply the configuration:
+For Kubernetes:
 
 ```bash
-kubectl apply -f booking-service.yaml
+kubectl apply -f .
 ```
 
-Check the pods:
+Verify that all pods are running:
 
 ```bash
 kubectl get pods
 ```
 
-Check the services:
-
-```bash
-kubectl get services
-```
-
-View application logs:
-
-```bash
-kubectl logs <booking-service-pod>
-```
-
-### Ports
-
-The Spring Boot application runs inside the container on port:
+Expected result:
 
 ```text
-8080
+booking-service     Running
+customer-service    Running
+review-service      Running
 ```
 
-The Kubernetes Service exposes Booking Service on:
-
-```text
-8082
-```
-
-Example configuration:
-
-```yaml
-ports:
-  - port: 8082
-    targetPort: 8080
-```
-
-## Database
-
-Booking Service uses a MySQL database.
-
-Example JDBC URL:
-
-```text
-jdbc:mysql://booking-mysql:3306/Bookingservice
-```
-
-Database credentials should be provided through environment variables or Kubernetes Secrets and should not be committed to Git.
-
-## Project Structure
-
-```text
-Booking-service/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   └── resources/
-│   └── test/
-├── Dockerfile
-├── docker-compose.yml
-├── pom.xml
-└── README.md
-```
-
-## Running Locally
-
-Build the project:
-
-```bash
-./mvnw clean package
-```
-
-Run Spring Boot:
-
-```bash
-./mvnw spring-boot:run
-```
-
-Or build the Docker image:
-
-```bash
-docker build -t booking-service:1 .
-```
+Once the services are running, requests can be routed through Nginx to the appropriate microservice.
