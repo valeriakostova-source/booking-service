@@ -153,7 +153,7 @@ kubectl logs <pod-name>
 | Customer Service | 8081 |
 | Booking Service  | 8082 |
 | Review Service   | 8083 |
-| Nginx            |   80 |
+
 
 The internal Spring Boot container port may differ from the Kubernetes Service port depending on the deployment configuration.
 
