@@ -16,7 +16,7 @@ The services communicate through REST APIs and are deployed using Docker and Kub
                      Client / Frontend
                             |
                             v
-                          Nginx
+
                             |
           +-----------------+-----------------+
           |                 |                 |
