@@ -98,4 +98,11 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(ExternalServiceConnectionException.class)
+    public ResponseEntity<String> externalServiceConnectionException(ExternalServiceConnectionException ex) {
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(ex.getMessage());
+    }
+
 }
