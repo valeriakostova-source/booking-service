@@ -156,6 +156,11 @@ async function createReservation(roomId) {
             window.location.replace("/login");
             return;
         }
+        if (response.status === 503) {
+            alert("Customer-server is temporary unavailable. Try again later.");
+            return;
+        }
+
         const errorMessage = await response.text();
         alert(errorMessage);
         return;
