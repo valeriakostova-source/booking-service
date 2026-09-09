@@ -15,7 +15,6 @@ async function login() {
 
     const rawValue = await response.text();
 
-
     //Parsing between text and json
     let data;
     try {
