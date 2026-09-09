@@ -8,6 +8,20 @@ The system consists of three services:
 * **Customer Service** – manages customers and customer-related functionality
 * **Review Service** – manages reviews and ratings
 
+
+## Startup
+- 1. The service(s) is started using either Docker of Kubernetes from one of the commands below.
+- 2. After the service(s) have started the frontend can be reached in a webrowser using ```http://localhost:8082```
+- Obs. Kubernetes needs booking-service to be port-forwarded using port 8082 for the frontend to be reachable in the browser.
+<br></br>
+- Kubernetes: ```kubectl apply -f k8s/```
+- Docker: ```docker compose up -d --build```
+## Shutdown
+- To close/delete your started Kubernetes/Docker container/pods use the commands below
+<br></br>
+- Kubernetes ```kubectl delete -f k8s/```
+- Docker ```docker compose down```
+
 ## Architecture
 
 ```text
@@ -128,8 +142,6 @@ Review Service
 * JavaScript
 
 ## Kubernetes
-
-Each service runs separately in Kubernetes.
 
 ```text
 booking-service
