@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @SpringBootTest(properties = {
-        "spring.datasource.url=jdbc:mysql://localhost:3307/Bookingservice",
+        "spring.datasource.url=jdbc:mysql://localhost:3307/Booking-service",
         "spring.datasource.username=booking_user",
         "spring.datasource.password=booking_password",
         "REVIEW_DB_CLIENT_URL=http://localhost:8081",
