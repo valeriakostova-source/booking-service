@@ -29,7 +29,17 @@ async function registerCustomer() {
         })
     });
 
-    const data = await response.json();
+    const rawValue = await response.text();
+    console.log("rawValue: ", rawValue)
+
+    //Parsing between text and json
+    let data;
+    try {
+        data = JSON.parse(rawValue);
+    } catch {
+        data = rawValue;
+    }
+    console.log("data: ", data," type: ", typeof data);
 
     if (response.ok) {
         window.location.href = "/login";
@@ -38,21 +48,58 @@ async function registerCustomer() {
 
     //Validation errors
     if (response.status === 400) {
-        for (const field in data) {
-            const errorDiv = document.getElementById(`${field}_error`);
-            if (errorDiv) {
-                errorDiv.innerHTML = data[field];
+        if (typeof data === "object") {
+            for (const field in data) {
+                console.log("for-loop")
+                const errorDiv = document.getElementById(`${field}_error`);
+                if (errorDiv) {
+                    errorDiv.innerHTML = data[field];
+                    console.log("errorDiv: ", errorDiv.innerHTML = data[field])
+                }
             }
+            return;
+
+        } else {
+            if (data.match("Email")) {
+                document.getElementById("email_error").innerText = data;
+            } else if (data.match("Identification")) {
+                document.getElementById("identificationNumber_error").innerText = data;
+            } else if (data.match("Phone")) {
+                document.getElementById("phoneNumber_error").innerText = data;
+            } else {
+                document.getElementById("result_message").innerText = data;
+            }
+
+            return;
         }
-        return;
+
+        // if (typeof data === "object") {
+        //     for (const field in data) {
+        //         console.log("for-loop")
+        //         const errorDiv = document.getElementById(`${field}_error`);
+        //         if (errorDiv) {
+        //             errorDiv.innerHTML = data[field];
+        //             console.log("errorDiv: ", errorDiv.innerHTML = data[field])
+        //         }
+        //     }
+        //     return;
+        //
+        // } else {
+        //     console.log("data in else: ", data, " type: ", typeof data)
+        //     document.getElementById("result_message").innerText = data;
+        //     return;
+        // }
+
     } else if (response.status === 503) {
         document.getElementById("result_message").innerText = "The server is temporarily down. Please try again later.";
         return;
     }
 
     if (!response.ok) {
-        document.getElementById("error_message").innerText = data.error || "Unexpected error occur";
+        console.log("!response.ok")
+        document.getElementById("result_message").innerText = data.error || "Unexpected error occur";
+        return;
     }
-
+    console.log("sista")
     document.getElementById("result_message").innerText = data.message || "failed to register";
 }
