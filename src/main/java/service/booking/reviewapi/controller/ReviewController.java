@@ -19,58 +19,33 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews")
-    public ResponseEntity<List<ReviewResponseDto>> getAllReviews(@RequestHeader(value = "Authorization", required = false) String token) {
-        if (token == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+    public ResponseEntity<List<ReviewResponseDto>> getAllReviews(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(reviewClient.getAllReviews(token));
     }
 
     @GetMapping("/reviews/user")
-    public ResponseEntity<List<ReviewResponseDto>> getReviewsFromUserId(@RequestHeader(value = "Authorization", required = false) String token) {
-        if (token == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+    public ResponseEntity<List<ReviewResponseDto>> getReviewsFromUserId(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(reviewClient.getReviewsFromUserId(token));
     }
 
     @PostMapping("/reviews")
-    public ResponseEntity<ReviewResponseDto> createNewReview(@RequestHeader(value = "Authorization", required = false) String token, @RequestBody NewReviewDto newReviewDto) {
-        if (token == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+    public ResponseEntity<ReviewResponseDto> createNewReview(@RequestHeader("Authorization") String token, @RequestBody NewReviewDto newReviewDto) {
         return ResponseEntity.ok(reviewClient.createNewReview(token, newReviewDto));
-
     }
 
-    @GetMapping("/reviews/{id}")
-    public ResponseEntity<ReviewResponseDto> getReviewById(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable("id") Long roomNumber) {
-        if (token == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        return ResponseEntity.ok(reviewClient.getReviewById(token, roomNumber));
+    @GetMapping("/reviews/{reviewId}")
+    public ResponseEntity<ReviewResponseDto> getReviewById(@RequestHeader("Authorization") String token, @PathVariable("reviewId") Long reviewId) {
+        return ResponseEntity.ok(reviewClient.getReviewById(token, reviewId));
     }
 
-    @GetMapping("/reviews/room/avgRating/{id}")
-    public ResponseEntity<Double> getAvgRating(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable("id") int roomNumber) {
-        if (token == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+    @GetMapping("/reviews/room/avgRating/{roomNumber}")
+    public ResponseEntity<Double> getAvgRating(@RequestHeader("Authorization") String token, @PathVariable("roomNumber") Integer roomNumber) {
         return ResponseEntity.ok(reviewClient.getAverageRating(token, roomNumber));
     }
 
-    @DeleteMapping("/reviews/{id}")
-    public ResponseEntity<String>  deleteReviewById(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long id) {
-        if (token == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        ResponseEntity<Void> response =
-                reviewClient.deleteReviewById(token, id);
-
-        return ResponseEntity
-                .status(response.getStatusCode())
-                .build();
-
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity<String> deleteReviewById(@RequestHeader("Authorization") String token, @PathVariable("reviewId") Long reviewId) {
+        return reviewClient.deleteReviewById(token, reviewId);
     }
 
 }
