@@ -42,7 +42,7 @@ async function getMyReviews() {
                 : "";
 
             row.innerHTML = `
-                <td>${review.roomId ?? ""}</td>
+                <td>${review.roomNumber ?? ""}</td>
                 <td>${review.reviewContent ?? ""}</td>
                 <td>${review.reviewScore != null ? review.reviewScore + '/5' : 'N/A'}</td>
                 <td>${formattedDate}</td>

@@ -26,12 +26,17 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         // Public GET endpoint for available rooms
+                        //Reservation
                         .requestMatchers(HttpMethod.GET, "/api/reservation").permitAll()
                         .requestMatchers("/api/reservation/test").permitAll()
+                        //Customer
                         .requestMatchers("/connect/create").permitAll()
                         .requestMatchers("/connect/login").permitAll()
                         .requestMatchers("/connect/**").authenticated()
                         .requestMatchers("/api/**").authenticated()
+                        //Reviews
+                        .requestMatchers(HttpMethod.POST, "/reviews").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/reviews/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 // REST API uses JWT, so we don't need HTTP sessions
