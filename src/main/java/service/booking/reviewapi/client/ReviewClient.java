@@ -56,7 +56,7 @@ public class ReviewClient {
                 .body(ReviewResponseDto.class);
     }
 
-    public Double getAverageRating(String token, int roomNumber) {
+    public Double getAverageRating(String token, Integer roomNumber) {
         return restClient.get()
                 .uri("/reviews/room/avgRating/" + roomNumber)
                 .header("Authorization", formatBearerToken(token))
@@ -64,12 +64,12 @@ public class ReviewClient {
                 .body(Double.class);
     }
 
-    public ResponseEntity<Void> deleteReviewById(String token, Long reviewId) {
+    public ResponseEntity<String> deleteReviewById(String token, Long reviewId) {
         return restClient.delete()
                 .uri("/reviews/" + reviewId)
                 .header("Authorization", formatBearerToken(token))
                 .retrieve()
-                .toBodilessEntity();
+                .toEntity(String.class);
     }
 
 
