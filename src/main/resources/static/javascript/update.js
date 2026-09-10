@@ -35,14 +35,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (responseData.emailError) {
             document.getElementById("emailError").textContent = responseData.emailError;
+            return;
         }
 
         if (responseData.phoneError) {
             document.getElementById("phoneError").textContent = responseData.phoneError;
+            return;
         }
 
         if (!response.ok) {
             document.getElementById("error_message").innerText = data.error || "Unexpected error occur";
+            return;
         }
 
         if (responseData.success) {
