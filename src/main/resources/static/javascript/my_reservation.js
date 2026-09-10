@@ -25,7 +25,7 @@ function renderReservations(reservations) {
         // Safe boolean check for CANCELED or CANCELLED status
         const currentStatus = res.status ? res.status.toUpperCase() : "";
         const isCanceled = currentStatus === "CANCELED" || currentStatus === "CANCELLED";
-        const roomId = res.roomId || res.roomNumber;
+        const roomNumber = res.roomNumber;
 
         row.innerHTML = `
             <td>${res.checkIn}</td>
@@ -36,7 +36,7 @@ function renderReservations(reservations) {
             <td class="status-${currentStatus.toLowerCase()}">${res.status}</td>
             <td>
                 ${isCanceled ? `
-                    <button class="action-btn review-btn" onclick="openReviewModal(${roomId})">Make Review</button>
+                    <button class="action-btn review-btn" onclick="openReviewModal(${roomNumber})">Make Review</button>
                 ` : `
                     <button class="action-btn edit-btn" onclick="toggleEditForm(${res.id})">Edit</button>
                     <button class="action-btn delete-btn" onclick="deleteReservation(${res.id}, this)">Delete</button>
@@ -73,8 +73,8 @@ function renderReservations(reservations) {
     });
 }
 
-function openReviewModal(roomId) {
-    document.getElementById("reviewRoomId").value = roomId;
+function openReviewModal(roomNumber) {
+    document.getElementById("reviewRoomNumber").value = roomNumber;
     document.getElementById("reviewContent").value = "";
     document.getElementById("reviewScore").value = "5";
 
@@ -93,7 +93,7 @@ function openReviewModal(roomId) {
 }
 
 async function submitReview() {
-    const roomId = document.getElementById("reviewRoomId").value;
+    const roomNumber = document.getElementById("reviewRoomNumber").value;
     const reviewContent = document.getElementById("reviewContent").value;
     const reviewScore = document.getElementById("reviewScore").value;
     const token = localStorage.getItem("jwt");
@@ -104,7 +104,7 @@ async function submitReview() {
     }
 
     const payload = {
-        roomId: parseInt(roomId),
+        roomNumber: parseInt(roomNumber),
         reviewContent: reviewContent,
         reviewScore: parseInt(reviewScore)
     };
