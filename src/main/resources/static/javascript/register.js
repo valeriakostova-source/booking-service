@@ -30,7 +30,6 @@ async function registerCustomer() {
     });
 
     const rawValue = await response.text();
-    console.log("rawValue: ", rawValue)
 
     //Parsing between text and json
     let data;
@@ -72,23 +71,6 @@ async function registerCustomer() {
 
             return;
         }
-
-        // if (typeof data === "object") {
-        //     for (const field in data) {
-        //         console.log("for-loop")
-        //         const errorDiv = document.getElementById(`${field}_error`);
-        //         if (errorDiv) {
-        //             errorDiv.innerHTML = data[field];
-        //             console.log("errorDiv: ", errorDiv.innerHTML = data[field])
-        //         }
-        //     }
-        //     return;
-        //
-        // } else {
-        //     console.log("data in else: ", data, " type: ", typeof data)
-        //     document.getElementById("result_message").innerText = data;
-        //     return;
-        // }
 
     } else if (response.status === 503) {
         document.getElementById("result_message").innerText = "The server is temporarily down. Please try again later.";
