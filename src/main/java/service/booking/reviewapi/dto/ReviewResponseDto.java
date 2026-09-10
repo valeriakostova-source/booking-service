@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public record ReviewResponseDto(
         Long id,
         Long userId,
-        Long roomId,
+        Integer roomNumber,
         String reviewContent,
         Integer reviewScore,
         LocalDateTime creationDate,
