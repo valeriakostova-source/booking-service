@@ -52,11 +52,11 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/room/avgRating/{id}")
-    public ResponseEntity<Double> getAvgRating(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable("id") Long roomId) {
+    public ResponseEntity<Double> getAvgRating(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable("id") int roomNumber) {
         if (token == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return ResponseEntity.ok(reviewClient.getAverageRating(token, roomId));
+        return ResponseEntity.ok(reviewClient.getAverageRating(token, roomNumber));
     }
 
     @DeleteMapping("/reviews/{id}")
