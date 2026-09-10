@@ -1,11 +1,9 @@
 package service.booking.reviewapi.client;
 
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import service.booking.reviewapi.dto.NewReviewDto;
 import service.booking.reviewapi.dto.ReviewResponseDto;
@@ -66,9 +64,9 @@ public class ReviewClient {
                 .body(ReviewResponseDto.class);
     }
 
-    public Double getAverageRating(String token, Long roomId) {
+    public Double getAverageRating(String token, int roomNumber) {
         return restClient.get()
-                .uri("/reviews/room/avgRating/" + roomId)
+                .uri("/reviews/room/avgRating/" + roomNumber)
                 .header("Authorization", formatBearerToken(token))
                 .retrieve()
                 .body(Double.class);
