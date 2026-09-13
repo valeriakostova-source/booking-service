@@ -49,11 +49,9 @@ async function registerCustomer() {
     if (response.status === 400) {
         if (typeof data === "object") {
             for (const field in data) {
-                console.log("for-loop")
                 const errorDiv = document.getElementById(`${field}_error`);
                 if (errorDiv) {
                     errorDiv.innerHTML = data[field];
-                    console.log("errorDiv: ", errorDiv.innerHTML = data[field])
                 }
             }
             return;
@@ -78,10 +76,9 @@ async function registerCustomer() {
     }
 
     if (!response.ok) {
-        console.log("!response.ok")
         document.getElementById("result_message").innerText = data.error || "Unexpected error occur";
         return;
     }
-    console.log("sista")
+
     document.getElementById("result_message").innerText = data.message || "failed to register";
 }
